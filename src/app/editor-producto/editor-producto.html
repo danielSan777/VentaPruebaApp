@@ -1,0 +1,134 @@
+<div class="editor">
+
+  <h2>Configurar producto</h2>
+
+  <div class="editor-contenido">
+
+
+    <!-- ============================ -->
+    <!-- PANEL DE ACCESORIOS -->
+    <!-- ============================ -->
+
+    <div class="panel-accesorios">
+
+      <h3>Accesorios</h3>
+
+
+      <div class="lista-accesorios" cdkDropList [cdkDropListData]="accesorios()" #listaAccesorios="cdkDropList"
+        [cdkDropListConnectedTo]="[visor]">
+
+        @for (
+        accesorio of accesorios();
+        track accesorio.id
+        ) {
+
+        <div class="accesorio" cdkDrag [cdkDragData]="accesorio">
+
+          <img [src]="accesorio.imagen" [alt]="accesorio.nombre">
+
+          <span>
+            {{ accesorio.nombre }}
+          </span>
+
+        </div>
+
+        }
+
+      </div>
+
+    </div>
+    <!-- ============================ -->
+    <!-- VISOR -->
+    <!-- ============================ -->
+
+    <div class="visor" cdkDropList #visor="cdkDropList" [cdkDropListConnectedTo]="[listaAccesorios]"
+      [cdkDropListData]="accesoriosColocados()" (cdkDropListDropped)="soltarAccesorio($event)">
+
+      <!-- MACETA -->
+
+      <img src="assets/productos/maceta.png" class="maceta" alt="Maceta">
+
+
+      <!-- ACCESORIOS COLOCADOS -->
+
+      @for (
+      accesorio of accesoriosColocados();
+      track accesorio.id
+      ) {
+
+      <div class="accesorio-colocado" cdkDrag>
+
+        <img [src]="accesorio.imagen" [alt]="accesorio.nombre">
+
+      </div>
+
+      }
+
+    </div>
+
+  </div>
+  <!-- visor -->
+  <!-- 
+    <div class="visor">
+    
+      MACETA 
+
+    <img src="/productos/maceta.png" class="maceta" alt="Maceta">
+
+    LENTES 
+
+    <div class="lentes" cdkDrag [cdkDragFreeDragPosition]="this.posicion()" cdkDragBoundary=".visor"
+      (cdkDragEnded)="terminarMovimiento($event)">
+      <canvas #canvasLentes></canvas>
+
+
+    </div>
+
+  </div> -->
+
+
+
+
+
+  <label>
+    Tamaño:
+    {{ ancho }} px
+  </label>
+
+  <input type="range" min="50" max="400" [(ngModel)]="ancho">
+
+  <div class="controles">
+    <label>Color de lentes:</label>
+
+    <input type="color" [(ngModel)]="colorSeleccionado" (change)="cambiarColor()">
+
+    <span>{{ colorSeleccionado }}</span>
+  </div>
+
+
+
+  <!-- INFORMACIÓN -->
+
+  <div class="informacion">
+
+    <p>
+      X: {{ posicion().x }}
+    </p>
+
+    <p>
+      Y: {{ posicion().y }}
+    </p>
+    <p>
+      {{ posicion() | json }}
+    </p>
+
+  </div>
+
+
+  <button (click)="guardarConfiguracion()">
+
+    Guardar configuración
+
+  </button>
+
+</div>
