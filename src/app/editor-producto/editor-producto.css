@@ -3,8 +3,13 @@
   margin: 30px auto;
 }
 
+.zona-drop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
 
-.visor {
+/* .visor {
   position: relative;
 
   width: 500px;
@@ -13,7 +18,7 @@
   border: 2px solid #ccc;
 
   overflow: hidden;
-}
+} */
 
 /* ========================= */
 /* PANEL ACCESORIOS */
@@ -90,7 +95,7 @@
 
 /*LENTES */
 
-.lentes{
+.lentes {
   position: absolute;
   width: 100px;
   height: 90px;
@@ -120,7 +125,7 @@
   margin-top: 20px;
 }
 
-button{
+button {
   margin-top: 10px;
 
   padding: 10px 20px;
@@ -133,20 +138,20 @@ button{
 /* ACCESORIO COLOCADO */
 /* ========================= */
 
-.accesorio-colocado{
+.accesorio-colocado {
 
   position: absolute;
-
+  /* 
   left: 0;
 
-  top: 0;
+  top: 0; */
 
   cursor: grab;
 
 }
 
 
-.accesorio-colocado img{
+.accesorio-colocado img {
 
   width: 140px;
 
@@ -155,3 +160,20 @@ button{
   object-fit: contain;
 
 }
+
+.accesorio-deshabilitado {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.visor {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  overflow: hidden;
+}
+
+
+/* .accesorio-colocado:active {
+  cursor: grabbing;
+} */

@@ -1,0 +1,22 @@
+.visor {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    overflow: hidden;
+}
+
+.maceta {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+}
+
+.accesorio-colocado {
+    position: absolute;
+}

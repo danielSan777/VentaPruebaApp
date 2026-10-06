@@ -1,134 +1,224 @@
-<div class="editor">
+<div class="container-fluid py-4">
 
-  <h2>Configurar producto</h2>
+  <!-- TÍTULO -->
+  <div class="mb-4">
+    <h2 class="fw-bold">Configurar producto</h2>
+  </div>
 
-  <div class="editor-contenido">
 
+  <div class="row g-4">
 
-    <!-- ============================ -->
+    <!-- ================================= -->
     <!-- PANEL DE ACCESORIOS -->
-    <!-- ============================ -->
+    <!-- ================================= -->
 
-    <div class="panel-accesorios">
+    <div class="col-12 col-md-3 col-lg-3">
 
-      <h3>Accesorios</h3>
+      <div class="card shadow-sm">
 
+        <div class="card-header">
+          <h5 class="mb-0">Accesorios</h5>
+        </div>
 
-      <div class="lista-accesorios" cdkDropList [cdkDropListData]="accesorios()" #listaAccesorios="cdkDropList"
-        [cdkDropListConnectedTo]="[visor]">
+        <div class="card-body" cdkDropList [cdkDropListData]="accesorios()" #listaAccesorios="cdkDropList"
+          [cdkDropListConnectedTo]="[visor]">
 
-        @for (
-        accesorio of accesorios();
-        track accesorio.id
-        ) {
+          @for (
+          accesorio of accesorios();
+          track accesorio.id
+          ) {
 
-        <div class="accesorio" cdkDrag [cdkDragData]="accesorio">
+          <div class="card mb-3" cdkDrag [cdkDragData]="accesorio" [cdkDragDisabled]="estaColocado(accesorio.id)"
+            [class.opacity-50]="estaColocado(accesorio.id)">
 
-          <img [src]="accesorio.imagen" [alt]="accesorio.nombre">
+            <div class="card-body text-center">
 
-          <span>
-            {{ accesorio.nombre }}
-          </span>
+              <img [src]="accesorio.imagen" [alt]="accesorio.nombre" class="img-fluid"
+                style="height: 80px; object-fit: contain;">
+
+              <div class="mt-2">
+                <span class="fw-semibold">
+                  {{ accesorio.nombre }}
+                </span>
+              </div>
+
+              @if (estaColocado(accesorio.id)) {
+
+              <small class="text-muted">
+                Ya colocado
+              </small>
+
+              }
+
+            </div>
+
+          </div>
+
+          }
 
         </div>
 
-        }
-
       </div>
 
     </div>
-    <!-- ============================ -->
+
+
+    <!-- ================================= -->
     <!-- VISOR -->
-    <!-- ============================ -->
+    <!-- ================================= -->
 
-    <div class="visor" cdkDropList #visor="cdkDropList" [cdkDropListConnectedTo]="[listaAccesorios]"
-      [cdkDropListData]="accesoriosColocados()" (cdkDropListDropped)="soltarAccesorio($event)">
+    <div class="col-12 col-md-9 col-lg-9">
 
-      <!-- MACETA -->
+      <div class="card shadow-sm">
 
-      <img src="assets/productos/maceta.png" class="maceta" alt="Maceta">
+        <div class="card-header">
+          <h5 class="mb-0">Vista del producto</h5>
+        </div>
+
+        <div class="card-body">
+
+          <div class="visor mx-auto">
+
+            <!-- Maceta (flujo normal, da el tamaño al visor) -->
+            <img src="productos/maceta.png" class="maceta" alt="Maceta">
+
+            <!-- Zona que RECIBE los accesorios del panel (sin hijos cdkDrag) -->
+            <div class="zona-drop" cdkDropList #visor="cdkDropList" cdkDropListSortingDisabled
+              [cdkDropListConnectedTo]="[listaAccesorios]" [cdkDropListData]="accesoriosColocados()"
+              (cdkDropListDropped)="soltarAccesorio($event)">
+            </div>
+
+            <!-- Capa con los accesorios MOVIBLES (fuera del drop list) -->
+            <div class="capa-accesorios">
+              @for (accesorio of accesoriosColocados(); track accesorio.id) {
+
+              <div class="accesorio-colocado" cdkDrag cdkDragBoundary=".visor" [style.left.px]="accesorio.x"
+                [style.top.px]="accesorio.y" (cdkDragEnded)="terminarMovimientoAccesorio($event, accesorio.id)">
+
+                <img [src]="accesorio.imagen" [alt]="accesorio.nombre" [style.width.px]="accesorio.ancho"
+                  [style.height.px]="accesorio.alto">
+
+                <div class="small bg-dark text-white px-1">
+                  X: {{ accesorio.x }} | Y: {{ accesorio.y }}
+                </div>
+              </div>
+              }
+            </div>
+
+          </div>
 
 
-      <!-- ACCESORIOS COLOCADOS -->
 
-      @for (
-      accesorio of accesoriosColocados();
-      track accesorio.id
-      ) {
 
-      <div class="accesorio-colocado" cdkDrag>
 
-        <img [src]="accesorio.imagen" [alt]="accesorio.nombre">
+        </div>
 
       </div>
 
-      }
+    </div>
+
+
+    <!-- ================================= -->
+    <!-- CONFIGURACIÓN -->
+    <!-- ================================= -->
+
+    <div class="row mt-4">
+
+      <div class="col-12 col-md-6">
+
+        <div class="card shadow-sm">
+
+          <div class="card-header">
+            <h5 class="mb-0">Configuración del accesorio</h5>
+          </div>
+
+          <div class="card-body">
+
+            <!-- TAMAÑO -->
+
+            <label class="form-label">
+              Tamaño:
+              <strong>{{ ancho }} px</strong>
+            </label>
+
+            <input type="range" class="form-range" min="50" max="400" [(ngModel)]="ancho">
+
+
+            <!-- COLOR -->
+
+            <div class="mt-3">
+
+              <label class="form-label">
+                Color de lentes
+              </label>
+
+              <div class="d-flex align-items-center gap-3">
+
+                <input type="color" class="form-control form-control-color" [(ngModel)]="colorSeleccionado"
+                  (change)="cambiarColor()">
+
+                <span class="badge text-bg-secondary">
+                  {{ colorSeleccionado }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================================= -->
+      <!-- INFORMACIÓN -->
+      <!-- ================================= -->
+
+      <div class="col-12 col-md-6">
+
+        <div class="card shadow-sm">
+
+          <div class="card-header">
+            <h5 class="mb-0">Posición</h5>
+          </div>
+
+          <div class="card-body">
+
+            <p class="mb-2">
+              X:
+              <strong>{{ posicion().x }}</strong>
+            </p>
+
+            <p class="mb-2">
+              Y:
+              <strong>{{ posicion().y }}</strong>
+            </p>
+
+            <pre class="bg-light p-2 rounded">
+{{ posicion() | json }}
+          </pre>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================================= -->
+    <!-- GUARDAR -->
+    <!-- ================================= -->
+
+    <div class="mt-4">
+
+      <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">
+        Guardar configuración
+      </button>
 
     </div>
 
   </div>
-  <!-- visor -->
-  <!-- 
-    <div class="visor">
-    
-      MACETA 
-
-    <img src="/productos/maceta.png" class="maceta" alt="Maceta">
-
-    LENTES 
-
-    <div class="lentes" cdkDrag [cdkDragFreeDragPosition]="this.posicion()" cdkDragBoundary=".visor"
-      (cdkDragEnded)="terminarMovimiento($event)">
-      <canvas #canvasLentes></canvas>
-
-
-    </div>
-
-  </div> -->
-
-
-
-
-
-  <label>
-    Tamaño:
-    {{ ancho }} px
-  </label>
-
-  <input type="range" min="50" max="400" [(ngModel)]="ancho">
-
-  <div class="controles">
-    <label>Color de lentes:</label>
-
-    <input type="color" [(ngModel)]="colorSeleccionado" (change)="cambiarColor()">
-
-    <span>{{ colorSeleccionado }}</span>
-  </div>
-
-
-
-  <!-- INFORMACIÓN -->
-
-  <div class="informacion">
-
-    <p>
-      X: {{ posicion().x }}
-    </p>
-
-    <p>
-      Y: {{ posicion().y }}
-    </p>
-    <p>
-      {{ posicion() | json }}
-    </p>
-
-  </div>
-
-
-  <button (click)="guardarConfiguracion()">
-
-    Guardar configuración
-
-  </button>
-
-</div>

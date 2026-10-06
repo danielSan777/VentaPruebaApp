@@ -1,0 +1,52 @@
+<div class="container-fluid">
+
+    <div class="row">
+
+        <!-- ACCESORIOS -->
+        <div class="col-md-3">
+
+            <h4>Accesorios</h4>
+
+            @for(
+            accesorio of configuracion();
+            track accesorio.accesorioId
+            ){
+
+            <button type="button" class="btn btn-outline-primary w-100 mb-2" (click)="agregarAccesorio(accesorio)"
+                [disabled]="estaSeleccionado(accesorio.accesorioId)">
+
+                <img [src]="accesorio.imagen" width="50">
+
+                {{ accesorio.nombre }}
+
+            </button>
+
+            }
+
+        </div>
+
+
+        <!-- PRODUCTO -->
+        <div class="col-md-9">
+
+            <div class="visor">
+
+                <img src="productos/maceta.png" class="maceta">
+
+                @for (
+                accesorio of accesoriosSeleccionados();
+                track accesorio.id
+                ) {
+
+                <img [src]="accesorio.imagen" class="accesorio-colocado" [style.left.px]="accesorio.x"
+                    [style.top.px]="accesorio.y" [style.width.px]="accesorio.ancho" [style.height.px]="accesorio.alto">
+
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

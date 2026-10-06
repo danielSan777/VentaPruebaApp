@@ -12,6 +12,7 @@ import {
   CdkDrag,
   CdkDragDrop,
   CdkDragEnd,
+  CdkDragStart,
   CdkDropList
 } from '@angular/cdk/drag-drop';
 import { JsonPipe } from '@angular/common';
@@ -35,7 +36,7 @@ export class EditorProducto {
 
   private cdr = inject(ChangeDetectorRef);
 
-
+  posicionesIniciales = new Map<number, { x: number; y: number }>();
 
   posicion = signal({
     x: 150,
@@ -191,100 +192,178 @@ export class EditorProducto {
   }
 
 
-  soltarAccesorio(event: CdkDragDrop<AccesorioColocado[]>): void {
 
-    // Accesorio que estamos arrastrando
+  soltarAccesorio(
+    event: CdkDragDrop<AccesorioColocado[]>
+  ): void {
+
+    if (event.previousContainer === event.container) {
+      return;
+    }
+
     const accesorio = event.item.data as Accesorio;
 
-    // Elemento HTML del visor
     const visor = event.container.element.nativeElement;
-
-    // Posición y tamaño del visor en la pantalla
     const rect = visor.getBoundingClientRect();
 
-    // Punto donde se soltó el accesorio
     const punto = event.dropPoint;
 
-    // Coordenadas relativas al visor
-    const x = punto.x - rect.left;
-    const y = punto.y - rect.top;
+    const ancho = 140;
+    const alto = 90;
 
-    const nuevo: AccesorioColocado = {
+    const x = punto.x - rect.left - ancho / 2;
+    const y = punto.y - rect.top - alto / 2;
 
-      id: this.siguienteId++,
+    this.accesoriosColocados.update(lista => {
 
-      accesorioId: accesorio.id,
+      const existe = lista.some(
+        a => a.accesorioId === accesorio.id
+      );
 
-      nombre: accesorio.nombre,
+      if (existe) {
+        return lista;
+      }
 
-      imagen: accesorio.imagen,
+      return [
+        ...lista,
+        {
+          id: this.siguienteId++,
+          accesorioId: accesorio.id,
+          nombre: accesorio.nombre,
+          imagen: accesorio.imagen,
+          x: Math.round(x),
+          y: Math.round(y),
+          ancho,
+          alto
+        }
+      ];
 
-      x: x,
-
-      y: y,
-
-      ancho: 140,
-
-      alto: 90
-
-    };
-
-    this.accesoriosColocados.update(lista => [
-      ...lista,
-      nuevo
-    ]);
+    });
 
   }
 
 
-  terminarMovimiento(event: CdkDragEnd): void {
 
-    const posicion =
-      event.source.getFreeDragPosition();
 
-    this.posicion.set({
-      x: Math.round(posicion.x),
-      y: Math.round(posicion.y)
+  /* terminarMovimientoAccesorio(
+    event: CdkDragEnd,
+    id: number
+  ): void {
+
+   
+    const dx = event.distance.x;
+    const dy = event.distance.y;
+    console.log('ID:', id);
+    console.log('POSICIÓN CDK:', event.distance);
+
+    this.accesoriosColocados.update(lista =>
+
+      lista.map(accesorio => {
+
+        if (accesorio.id !== id) {
+          return accesorio;
+        }
+        const nuevoX =
+          accesorio.x + dx;
+
+        const nuevoY =
+          accesorio.y + dy;
+        
+
+        return {
+          ...accesorio,
+          x: Math.round(nuevoX),
+          y: Math.round(nuevoY)
+        };
+
+      })
+
+    );
+
+   
+    console.log(
+      'Accesorios:',
+      this.accesoriosColocados()
+    );
+    event.source.reset();
+
+  } */
+
+
+  terminarMovimientoAccesorio(
+    event: CdkDragEnd,
+    id: number
+  ): void {
+
+    const accesorio = this.accesoriosColocados()
+      .find(a => a.id === id);
+
+    if (!accesorio) return;
+
+    console.log('ANTES:', accesorio.x, accesorio.y);
+    console.log(
+      'DISTANCIA:',
+      event.distance.x,
+      event.distance.y
+    );
+
+    this.accesoriosColocados.update(lista =>
+      lista.map(a => {
+
+        if (a.id !== id) {
+          return a;
+        }
+
+        return {
+          ...a,
+          x: Math.round(a.x + event.distance.x),
+          y: Math.round(a.y + event.distance.y)
+        };
+
+      })
+    );
+
+    event.source.reset();
+  }
+
+  estaColocado(accesorioId: number): boolean {
+
+    return this.accesoriosColocados().some(
+      a => a.accesorioId === accesorioId
+    );
+
+  }
+
+  iniciarMovimientoAccesorio(
+    event: CdkDragStart,
+    accesorio: AccesorioColocado
+  ): void {
+
+    this.posicionesIniciales.set(accesorio.id, {
+      x: accesorio.x,
+      y: accesorio.y
     });
 
-    /* this.cdr.detectChanges(); */
-    console.log('signal', this.posicion());
-    console.log('X:', this.posicion().x);
-    console.log('Y:', this.posicion().y);
   }
 
 
   guardarConfiguracion(): void {
 
     const configuracion = {
-      x: this.posicion().x,
-      y: this.posicion().y,
-      width: this.ancho,
-      height: this.alto
+      productoId: 1,
+      accesorios: this.accesoriosColocados()
     };
+
+    localStorage.setItem(
+      'configuracionProducto',
+      JSON.stringify(configuracion)
+    );
 
     console.log(
       'Configuración:',
       configuracion
     );
+
   }
-
-  onDragEnded(event: CdkDragEnd): void {
-
-    const nuevaPosicion =
-      event.source.getFreeDragPosition();
-
-    this.posicion.set({
-      x: Math.round(nuevaPosicion.x),
-      y: Math.round(nuevaPosicion.y)
-    });
-
-    console.log('X:', this.posicion().x);
-    console.log('Y:', this.posicion().y);
-  }
-
-
-
-
 
 }
