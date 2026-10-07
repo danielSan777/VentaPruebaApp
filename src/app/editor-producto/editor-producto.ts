@@ -13,13 +13,14 @@ import {
   CdkDragDrop,
   CdkDragEnd,
   CdkDragStart,
-  CdkDropList
+  CdkDropList,
+  CdkDragPreview
 } from '@angular/cdk/drag-drop';
 import { JsonPipe } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [CdkDrag, FormsModule, JsonPipe, CdkDropList],
+  imports: [CdkDrag, FormsModule, JsonPipe, CdkDropList, CdkDragPreview],
   selector: 'app-editor-producto',
   styleUrl: './editor-producto.css',
   templateUrl: './editor-producto.html',

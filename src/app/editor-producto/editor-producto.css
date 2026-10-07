@@ -173,7 +173,34 @@ button {
   overflow: hidden;
 }
 
-
-/* .accesorio-colocado:active {
+/*.accesorio-colocado:active{
   cursor: grabbing;
-} */
+}*/
+
+.preview-accesorio {
+  display: block;
+  object-fit: contain;
+  background: transparent !important;
+}
+
+.cdk-drag-preview {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.drag-placeholder {
+  height: 120px;
+  border: 1px dashed #ccc;
+  background: transparent;
+}
+
+.preview-transparente {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+}

@@ -28,8 +28,8 @@
           track accesorio.id
           ) {
 
-          <div class="card mb-3" cdkDrag [cdkDragData]="accesorio" [cdkDragDisabled]="estaColocado(accesorio.id)"
-            [class.opacity-50]="estaColocado(accesorio.id)">
+          <div class="card mb-3" [cdkDragPreviewClass]="'preview-transparente'" cdkDrag [cdkDragData]="accesorio"
+            [cdkDragDisabled]="estaColocado(accesorio.id)" [class.opacity-50]="estaColocado(accesorio.id)">
 
             <div class="card-body text-center">
 
@@ -42,6 +42,8 @@
                 </span>
               </div>
 
+
+
               @if (estaColocado(accesorio.id)) {
 
               <small class="text-muted">
@@ -51,6 +53,22 @@
               }
 
             </div>
+
+            <!-- Preview que aparece mientras arrastras -->
+            <ng-template cdkDragPreview>
+
+              <img [src]="accesorio.imagen" [alt]="accesorio.nombre" style="
+        width: 140px;
+        height: 90px;
+        object-fit: contain;
+        background: transparent;
+      ">
+
+            </ng-template>
+
+
+
+
 
           </div>
 
@@ -97,6 +115,12 @@
 
                 <img [src]="accesorio.imagen" [alt]="accesorio.nombre" [style.width.px]="accesorio.ancho"
                   [style.height.px]="accesorio.alto">
+
+                <!-- Preview que utiliza CDK mientras arrastras -->
+                <ng-template cdkDragPreview>
+                  <img [src]="accesorio.imagen" [style.width.px]="accesorio.ancho" [style.height.px]="accesorio.alto"
+                    class="preview-accesorio">
+                </ng-template>
 
                 <div class="small bg-dark text-white px-1">
                   X: {{ accesorio.x }} | Y: {{ accesorio.y }}
