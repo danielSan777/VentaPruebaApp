@@ -194,45 +194,54 @@ export class EditorProducto {
   }
 
 
+  soltarAccesorio(event: CdkDragDrop<AccesorioColocado[]>): void {
 
-  soltarAccesorio(
-    event: CdkDragDrop<AccesorioColocado[]>
-  ): void {
-
+    // Si viene del mismo visor, no crear otro accesorio
     if (event.previousContainer === event.container) {
       return;
     }
 
     const accesorio = event.item.data as Accesorio;
 
+    // Zona de drop (cubre todo el visor)
     const visor = event.container.element.nativeElement;
     const rect = visor.getBoundingClientRect();
 
-    const punto = event.dropPoint;
+    // Ancho del accesorio como % del visor (≈140px en un visor de 600px)
+    const anchoPct = 23;
 
-    const ancho = 140;
-    const alto = 90;
+    // Tamaño aproximado en píxeles, solo para el respaldo y el límite
+    const anchoPx = rect.width * anchoPct / 100;
+    const altoPx = anchoPx * (90 / 140);   // misma proporción que 140x90
 
-    let x: number;
-    let y: number;
+    // 1. Posición en PÍXELES, relativa al visor
+    let xPx: number;
+    let yPx: number;
 
     if (this.rectPreview) {
-      // Donde el usuario VIO el preview
-      x = this.rectPreview.left - rect.left;
-      y = this.rectPreview.top - rect.top;
+      // Donde el usuario vio el preview al arrastrar
+      xPx = this.rectPreview.left - rect.left;
+      yPx = this.rectPreview.top - rect.top;
     } else {
-      // Respaldo: centrar en el cursor
-      x = event.dropPoint.x - rect.left - ancho / 2;
-      y = event.dropPoint.y - rect.top - alto / 2;
+      // Respaldo: centrar el accesorio en el cursor
+      xPx = event.dropPoint.x - rect.left - anchoPx / 2;
+      yPx = event.dropPoint.y - rect.top - altoPx / 2;
     }
 
     this.rectPreview = null;
 
+    // 2. Limitar para que no quede fuera del visor
+    xPx = Math.min(Math.max(xPx, 0), rect.width - anchoPx);
+    yPx = Math.min(Math.max(yPx, 0), rect.height - altoPx);
+
+    // 3. Convertir a PORCENTAJE
+    const x = +((xPx / rect.width) * 100).toFixed(2);
+    const y = +((yPx / rect.height) * 100).toFixed(2);
+
+    // 4. Agregar el accesorio (solo uno por tipo)
     this.accesoriosColocados.update(lista => {
 
-      const existe = lista.some(
-        a => a.accesorioId === accesorio.id
-      );
+      const existe = lista.some(a => a.accesorioId === accesorio.id);
 
       if (existe) {
         return lista;
@@ -245,63 +254,17 @@ export class EditorProducto {
           accesorioId: accesorio.id,
           nombre: accesorio.nombre,
           imagen: accesorio.imagen,
-          x: Math.round(x),
-          y: Math.round(y),
-          ancho,
-          alto
+          x,
+          y,
+          ancho: anchoPct,
+          alto: 0  // ya no se usa; el alto sale de la proporción de la imagen
         }
       ];
 
     });
+    console.log('colocados:', JSON.stringify(this.accesoriosColocados()));
 
   }
-
-
-
-
-  /* terminarMovimientoAccesorio(
-    event: CdkDragEnd,
-    id: number
-  ): void {
-
-   
-    const dx = event.distance.x;
-    const dy = event.distance.y;
-    console.log('ID:', id);
-    console.log('POSICIÓN CDK:', event.distance);
-
-    this.accesoriosColocados.update(lista =>
-
-      lista.map(accesorio => {
-
-        if (accesorio.id !== id) {
-          return accesorio;
-        }
-        const nuevoX =
-          accesorio.x + dx;
-
-        const nuevoY =
-          accesorio.y + dy;
-        
-
-        return {
-          ...accesorio,
-          x: Math.round(nuevoX),
-          y: Math.round(nuevoY)
-        };
-
-      })
-
-    );
-
-   
-    console.log(
-      'Accesorios:',
-      this.accesoriosColocados()
-    );
-    event.source.reset();
-
-  }*/
 
 
   iniciarArrastre(event: PointerEvent, a: AccesorioColocado): void {
@@ -309,26 +272,28 @@ export class EditorProducto {
     const el = event.currentTarget as HTMLElement;
     const visor = el.closest('.visor') as HTMLElement;
 
-    const rect = visor.getBoundingClientRect();
-    const offsetX = event.clientX - rect.left - a.x;
-    const offsetY = event.clientY - rect.top - a.y;
+    // Dónde agarraste el accesorio, en píxeles
+    const elRect = el.getBoundingClientRect();
+    const offsetX = event.clientX - elRect.left;
+    const offsetY = event.clientY - elRect.top;
 
     el.setPointerCapture(event.pointerId);
 
     const mover = (e: PointerEvent) => {
       const r = visor.getBoundingClientRect();
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
 
-      // Cuánto puede sobresalir el accesorio por abajo (se recorta con overflow: hidden)
-      const sobresale = a.alto * 0.2;
-
-      const x = Math.min(Math.max(e.clientX - r.left - offsetX, 0), r.width - a.ancho);
-      const y = Math.min(Math.max(e.clientY - r.top - offsetY, 0), r.height - a.alto + sobresale);
-
-      console.log('alto visor:', r.height, 'y:', y);
+      const pxX = Math.min(Math.max(e.clientX - r.left - offsetX, 0), r.width - w);
+      const pxY = Math.min(Math.max(e.clientY - r.top - offsetY, 0), r.height - h + h * 0.2);
 
       this.accesoriosColocados.update(lista =>
         lista.map(i => i.id === a.id
-          ? { ...i, x: Math.round(x), y: Math.round(y) }
+          ? {
+            ...i,
+            x: +((pxX / r.width) * 100).toFixed(2),
+            y: +((pxY / r.height) * 100).toFixed(2)
+          }
           : i)
       );
     };

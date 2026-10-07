@@ -151,12 +151,8 @@ button {
 
 .accesorio-colocado img {
   display: block;
-  width: 140px;
-
-  height: 90px;
-
-  object-fit: contain;
-
+  width: 100%;
+  height: auto;
 }
 
 .accesorio-deshabilitado {

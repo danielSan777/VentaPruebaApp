@@ -111,11 +111,10 @@
             <div class="capa-accesorios">
               @for (accesorio of accesoriosColocados(); track accesorio.id) {
 
-              <div class="accesorio-colocado" [style.left.px]="accesorio.x" [style.top.px]="accesorio.y"
-                (pointerdown)="iniciarArrastre($event, accesorio)">
+              <div class="accesorio-colocado" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y"
+                [style.width.%]="accesorio.ancho" (pointerdown)="iniciarArrastre($event, accesorio)">
 
-                <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre"
-                  [style.width.px]="accesorio.ancho" [style.height.px]="accesorio.alto">
+                <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre">
 
 
 
