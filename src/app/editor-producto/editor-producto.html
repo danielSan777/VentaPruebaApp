@@ -111,17 +111,13 @@
             <div class="capa-accesorios">
               @for (accesorio of accesoriosColocados(); track accesorio.id) {
 
-              <div class="accesorio-colocado" cdkDrag cdkDragBoundary=".visor" [style.left.px]="accesorio.x"
-                [style.top.px]="accesorio.y" (cdkDragEnded)="terminarMovimientoAccesorio($event, accesorio.id)">
+              <div class="accesorio-colocado" [style.left.px]="accesorio.x" [style.top.px]="accesorio.y"
+                (pointerdown)="iniciarArrastre($event, accesorio)">
 
-                <img [src]="accesorio.imagen" [alt]="accesorio.nombre" [style.width.px]="accesorio.ancho"
-                  [style.height.px]="accesorio.alto">
+                <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre"
+                  [style.width.px]="accesorio.ancho" [style.height.px]="accesorio.alto">
 
-                <!-- Preview que utiliza CDK mientras arrastras -->
-                <ng-template cdkDragPreview>
-                  <img [src]="accesorio.imagen" [style.width.px]="accesorio.ancho" [style.height.px]="accesorio.alto"
-                    class="preview-accesorio">
-                </ng-template>
+
 
 
               </div>

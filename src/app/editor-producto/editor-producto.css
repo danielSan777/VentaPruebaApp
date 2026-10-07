@@ -79,18 +79,18 @@
 
 }
 
-/* MACETA */
+/*MACETA*/
+.visor {
+  position: relative;
+  width: 600px;
+  max-width: 100%;
+  overflow: hidden;
+}
 
 .maceta {
-  position: absolute;
-
-  left: 0;
-  top: 0;
-
+  display: block;
   width: 100%;
-  height: 100%;
-
-  object-fit: contain;
+  height: auto;
 }
 
 /*LENTES */
@@ -134,20 +134,18 @@ button {
 }
 
 
-/* ========================= */
-/* ACCESORIO COLOCADO */
-/* ========================= */
+/*=========================*/
+/*ACCESORIO COLOCADO*/
+/*=========================*/
+
 
 .accesorio-colocado {
-
   position: absolute;
-  /* 
-  left: 0;
-
-  top: 0; */
-
   cursor: grab;
-
+  touch-action: none;
+  /* necesario para arrastrar con el dedo */
+  user-select: none;
+  pointer-events: auto;
 }
 
 
@@ -166,12 +164,6 @@ button {
   cursor: not-allowed;
 }
 
-.visor {
-  position: relative;
-  width: 600px;
-  height: 600px;
-  overflow: hidden;
-}
 
 /*.accesorio-colocado:active{
   cursor: grabbing;
@@ -203,4 +195,11 @@ button {
   opacity: 0 !important;
   visibility: hidden !important;
   background: transparent !important;
+}
+
+.capa-accesorios {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }

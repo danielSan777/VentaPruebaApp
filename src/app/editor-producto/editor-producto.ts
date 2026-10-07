@@ -301,44 +301,50 @@ export class EditorProducto {
     );
     event.source.reset();
 
-  } */
+  }*/
 
 
-  terminarMovimientoAccesorio(
-    event: CdkDragEnd,
-    id: number
-  ): void {
+  iniciarArrastre(event: PointerEvent, a: AccesorioColocado): void {
 
-    const accesorio = this.accesoriosColocados()
-      .find(a => a.id === id);
+    const el = event.currentTarget as HTMLElement;
+    const visor = el.closest('.visor') as HTMLElement;
 
-    if (!accesorio) return;
+    const rect = visor.getBoundingClientRect();
+    const offsetX = event.clientX - rect.left - a.x;
+    const offsetY = event.clientY - rect.top - a.y;
 
-    console.log('ANTES:', accesorio.x, accesorio.y);
-    console.log(
-      'DISTANCIA:',
-      event.distance.x,
-      event.distance.y
-    );
+    el.setPointerCapture(event.pointerId);
 
-    this.accesoriosColocados.update(lista =>
-      lista.map(a => {
+    const mover = (e: PointerEvent) => {
+      const r = visor.getBoundingClientRect();
 
-        if (a.id !== id) {
-          return a;
-        }
+      // Cuánto puede sobresalir el accesorio por abajo (se recorta con overflow: hidden)
+      const sobresale = a.alto * 0.2;
 
-        return {
-          ...a,
-          x: Math.round(a.x + event.distance.x),
-          y: Math.round(a.y + event.distance.y)
-        };
+      const x = Math.min(Math.max(e.clientX - r.left - offsetX, 0), r.width - a.ancho);
+      const y = Math.min(Math.max(e.clientY - r.top - offsetY, 0), r.height - a.alto + sobresale);
 
-      })
-    );
+      console.log('alto visor:', r.height, 'y:', y);
 
-    event.source.reset();
+      this.accesoriosColocados.update(lista =>
+        lista.map(i => i.id === a.id
+          ? { ...i, x: Math.round(x), y: Math.round(y) }
+          : i)
+      );
+    };
+
+    const soltar = () => {
+      el.removeEventListener('pointermove', mover);
+      el.removeEventListener('pointerup', soltar);
+      el.removeEventListener('pointercancel', soltar);
+    };
+
+    el.addEventListener('pointermove', mover);
+    el.addEventListener('pointerup', soltar);
+    el.addEventListener('pointercancel', soltar);
   }
+
+
 
   estaColocado(accesorioId: number): boolean {
 
