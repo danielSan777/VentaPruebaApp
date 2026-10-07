@@ -35,7 +35,8 @@ export class EditorProducto {
 
   private imagenLentes = new Image();
 
-  private cdr = inject(ChangeDetectorRef);
+
+  private rectPreview: DOMRect | null = null;
 
   posicionesIniciales = new Map<number, { x: number; y: number }>();
 
@@ -212,8 +213,20 @@ export class EditorProducto {
     const ancho = 140;
     const alto = 90;
 
-    const x = punto.x - rect.left - ancho / 2;
-    const y = punto.y - rect.top - alto / 2;
+    let x: number;
+    let y: number;
+
+    if (this.rectPreview) {
+      // Donde el usuario VIO el preview
+      x = this.rectPreview.left - rect.left;
+      y = this.rectPreview.top - rect.top;
+    } else {
+      // Respaldo: centrar en el cursor
+      x = event.dropPoint.x - rect.left - ancho / 2;
+      y = event.dropPoint.y - rect.top - alto / 2;
+    }
+
+    this.rectPreview = null;
 
     this.accesoriosColocados.update(lista => {
 
@@ -366,5 +379,18 @@ export class EditorProducto {
     );
 
   }
+
+
+  registrarPreview(): void {
+    const preview = document.querySelector('.cdk-drag-preview');
+    if (preview) {
+      this.rectPreview = preview.getBoundingClientRect();
+    }
+  }
+
+
+
+
+
 
 }
