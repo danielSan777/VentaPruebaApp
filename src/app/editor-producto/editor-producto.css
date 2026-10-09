@@ -141,18 +141,17 @@ button {
 
 .accesorio-colocado {
   position: absolute;
+  pointer-events: auto;
   cursor: grab;
   touch-action: none;
-  /* necesario para arrastrar con el dedo */
-  user-select: none;
-  pointer-events: auto;
 }
+
 
 
 .accesorio-colocado img {
   display: block;
-  width: 100%;
-  height: auto;
+  pointer-events: none;
+  user-select: none;
 }
 
 .accesorio-deshabilitado {
@@ -196,6 +195,6 @@ button {
 .capa-accesorios {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 10;
   pointer-events: none;
 }

@@ -52,6 +52,15 @@ export class EditorProducto {
   // Color seleccionado
   color = '#000000';
 
+  accesorioSeleccionadoId = signal<number | null>(null);
+
+  porcentajeAncho = signal(23.3);
+  porcentajeAlto = signal(18);
+
+
+
+
+
 
   // ==========================================
   // ACCESORIOS DISPONIBLES
@@ -267,34 +276,52 @@ export class EditorProducto {
   }
 
 
+
   iniciarArrastre(event: PointerEvent, a: AccesorioColocado): void {
+    event.preventDefault();
 
     const el = event.currentTarget as HTMLElement;
     const visor = el.closest('.visor') as HTMLElement;
 
-    // Dónde agarraste el accesorio, en píxeles
-    const elRect = el.getBoundingClientRect();
-    const offsetX = event.clientX - elRect.left;
-    const offsetY = event.clientY - elRect.top;
+    if (!visor) return;
+
+    const rect = visor.getBoundingClientRect();
+
+    // Posición actual en píxeles
+    const xPixel = (a.x / 100) * rect.width;
+    const yPixel = (a.y / 100) * rect.height;
+
+    // Mantener el punto exacto donde agarraste el accesorio
+    const offsetX = event.clientX - rect.left - xPixel;
+    const offsetY = event.clientY - rect.top - yPixel;
 
     el.setPointerCapture(event.pointerId);
 
     const mover = (e: PointerEvent) => {
       const r = visor.getBoundingClientRect();
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
 
-      const pxX = Math.min(Math.max(e.clientX - r.left - offsetX, 0), r.width - w);
-      const pxY = Math.min(Math.max(e.clientY - r.top - offsetY, 0), r.height - h + h * 0.2);
+      // Tamaño del accesorio en píxeles
+      const anchoPixel = (a.ancho / 100) * r.width;
+      const altoPixel = (a.alto / 100) * r.height;
+
+      // Nueva posición en píxeles
+      let x = e.clientX - r.left - offsetX;
+      let y = e.clientY - r.top - offsetY;
+
+      // Limitar al visor
+      x = Math.max(0, Math.min(x, r.width - anchoPixel));
+      y = Math.max(0, Math.min(y, r.height - altoPixel));
+
+      // Convertir a porcentajes
+      const xPorcentaje = (x / r.width) * 100;
+      const yPorcentaje = (y / r.height) * 100;
 
       this.accesoriosColocados.update(lista =>
-        lista.map(i => i.id === a.id
-          ? {
-            ...i,
-            x: +((pxX / r.width) * 100).toFixed(2),
-            y: +((pxY / r.height) * 100).toFixed(2)
-          }
-          : i)
+        lista.map(i =>
+          i.id === a.id
+            ? { ...i, x: xPorcentaje, y: yPorcentaje }
+            : i
+        )
       );
     };
 
@@ -308,6 +335,7 @@ export class EditorProducto {
     el.addEventListener('pointerup', soltar);
     el.addEventListener('pointercancel', soltar);
   }
+
 
 
 
@@ -357,6 +385,45 @@ export class EditorProducto {
     if (preview) {
       this.rectPreview = preview.getBoundingClientRect();
     }
+  }
+
+
+  seleccionarAccesorio(a: AccesorioColocado): void {
+    this.accesorioSeleccionadoId.set(a.id);
+    this.porcentajeAncho.set(a.ancho);
+    this.porcentajeAlto.set(a.alto);
+  }
+
+  cambiarAncho(valor: number): void {
+    this.porcentajeAncho.set(valor);
+
+    const id = this.accesorioSeleccionadoId();
+
+    if (id === null) return;
+
+    this.accesoriosColocados.update(lista =>
+      lista.map(a =>
+        a.id === id
+          ? { ...a, ancho: valor }
+          : a
+      )
+    );
+  }
+
+  cambiarAlto(valor: number): void {
+    this.porcentajeAlto.set(valor);
+
+    const id = this.accesorioSeleccionadoId();
+
+    if (id === null) return;
+
+    this.accesoriosColocados.update(lista =>
+      lista.map(a =>
+        a.id === id
+          ? { ...a, alto: valor }
+          : a
+      )
+    );
   }
 
 

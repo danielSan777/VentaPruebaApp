@@ -112,9 +112,10 @@
               @for (accesorio of accesoriosColocados(); track accesorio.id) {
 
               <div class="accesorio-colocado" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y"
-                [style.width.%]="accesorio.ancho" (pointerdown)="iniciarArrastre($event, accesorio)">
+                (click)="seleccionarAccesorio(accesorio)" (pointerdown)="iniciarArrastre($event, accesorio)">
 
-                <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre">
+                <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre"
+                  [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
 
 
 
@@ -140,103 +141,98 @@
     <!-- CONFIGURACIÓN -->
     <!-- ================================= -->
 
-    <div class="row mt-4">
-
-      <div class="col-12 col-md-6">
-
-        <div class="card shadow-sm">
-
-          <div class="card-header">
-            <h5 class="mb-0">Configuración del accesorio</h5>
-          </div>
-
-          <div class="card-body">
-
-            <!-- TAMAÑO -->
-
-            <label class="form-label">
-              Tamaño:
-              <strong>{{ ancho }} px</strong>
-            </label>
-
-            <input type="range" class="form-range" min="50" max="400" [(ngModel)]="ancho">
 
 
-            <!-- COLOR -->
-
-            <div class="mt-3">
-
-              <label class="form-label">
-                Color de lentes
-              </label>
-
-              <div class="d-flex align-items-center gap-3">
-
-                <input type="color" class="form-control form-control-color" [(ngModel)]="colorSeleccionado"
-                  (change)="cambiarColor()">
-
-                <span class="badge text-bg-secondary">
-                  {{ colorSeleccionado }}
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
+    <div class="card shadow-sm">
+      <div class="card-header">
+        <h5 class="mb-0">Tamaño del accesorio</h5>
       </div>
 
+      <div class="card-body">
 
-      <!-- ================================= -->
-      <!-- INFORMACIÓN -->
-      <!-- ================================= -->
+        @if (accesorioSeleccionadoId() !== null) {
 
-      <div class="col-12 col-md-6">
+        <!-- ANCHO -->
+        <label class="form-label">
+          Ancho:
+          <strong>{{ porcentajeAncho() }}%</strong>
+        </label>
 
-        <div class="card shadow-sm">
+        <input type="range" class="form-range" min="5" max="80" step="0.5" [ngModel]="porcentajeAncho()"
+          (ngModelChange)="cambiarAncho($event)">
 
-          <div class="card-header">
-            <h5 class="mb-0">Posición</h5>
-          </div>
+        <!-- ALTO -->
+        <label class="form-label mt-3">
+          Alto:
+          <strong>{{ porcentajeAlto() }}%</strong>
+        </label>
 
-          <div class="card-body">
+        <input type="range" class="form-range" min="5" max="80" step="0.5" [ngModel]="porcentajeAlto()"
+          (ngModelChange)="cambiarAlto($event)">
 
-            <p class="mb-2">
-              X:
-              <strong>{{ posicion().x }}</strong>
-            </p>
+        } @else {
 
-            <p class="mb-2">
-              Y:
-              <strong>{{ posicion().y }}</strong>
-            </p>
+        <p class="text-muted mb-0">
+          Selecciona un accesorio de la maceta para ajustar su tamaño.
+        </p>
 
-            <pre class="bg-light p-2 rounded">
-{{ posicion() | json }}
-          </pre>
-
-          </div>
-
-        </div>
+        }
 
       </div>
-
     </div>
 
 
+
+
+
+
     <!-- ================================= -->
-    <!-- GUARDAR -->
+    <!-- INFORMACIÓN -->
     <!-- ================================= -->
 
-    <div class="mt-4">
+    <div class="col-12 col-md-6">
 
-      <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">
-        Guardar configuración
-      </button>
+      <div class="card shadow-sm">
+
+        <div class="card-header">
+          <h5 class="mb-0">Posición</h5>
+        </div>
+
+        <div class="card-body">
+
+          <p class="mb-2">
+            X:
+            <strong>{{ posicion().x }}</strong>
+          </p>
+
+          <p class="mb-2">
+            Y:
+            <strong>{{ posicion().y }}</strong>
+          </p>
+
+          <pre class="bg-light p-2 rounded">
+{{ posicion() | json }}
+          </pre>
+
+        </div>
+
+      </div>
 
     </div>
 
   </div>
+
+
+  <!-- ================================= -->
+  <!-- GUARDAR -->
+  <!-- ================================= -->
+
+  <div class="mt-4">
+
+    <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">
+      Guardar configuración
+    </button>
+
+  </div>
+
+</div>
