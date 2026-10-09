@@ -218,10 +218,10 @@ export class EditorProducto {
 
     // Ancho del accesorio como % del visor (≈140px en un visor de 600px)
     const anchoPct = 23;
-
+    const altoPct = 2;
     // Tamaño aproximado en píxeles, solo para el respaldo y el límite
     const anchoPx = rect.width * anchoPct / 100;
-    const altoPx = anchoPx * (90 / 140);   // misma proporción que 140x90
+    const altoPx = rect.height * altoPct / 100;  // misma proporción que 140x90
 
     // 1. Posición en PÍXELES, relativa al visor
     let xPx: number;
@@ -266,7 +266,7 @@ export class EditorProducto {
           x,
           y,
           ancho: anchoPct,
-          alto: 0  // ya no se usa; el alto sale de la proporción de la imagen
+          alto: altoPx  // ya no se usa; el alto sale de la proporción de la imagen
         }
       ];
 

@@ -111,11 +111,11 @@
             <div class="capa-accesorios">
               @for (accesorio of accesoriosColocados(); track accesorio.id) {
 
-              <div class="accesorio-colocado" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y"
-                (click)="seleccionarAccesorio(accesorio)" (pointerdown)="iniciarArrastre($event, accesorio)">
+              <div class="accesorio-colocado" [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto"
+                [style.left.%]="accesorio.x" [style.top.%]="accesorio.y" (click)="seleccionarAccesorio(accesorio)"
+                (pointerdown)="iniciarArrastre($event, accesorio)">
 
-                <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre"
-                  [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
+                <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre">
 
 
 
