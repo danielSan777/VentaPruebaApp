@@ -85,7 +85,7 @@
     <!-- VISOR -->
     <!-- ================================= -->
 
-    <div class="col-12 col-md-9 col-lg-9">
+    <div class="col-12 col-md-9 col-lg-7">
 
       <div class="card shadow-sm">
 
@@ -95,7 +95,7 @@
 
         <div class="card-body">
 
-          <div class="visor mx-auto">
+          <div class="visor mx-auto ">
 
             <!-- Maceta (flujo normal, da el tamaño al visor) -->
             <img src="productos/maceta.png" class="maceta" alt="Maceta">
@@ -141,41 +141,29 @@
     <!-- ================================= -->
 
 
+    <!-- Controles al lado del visor -->
+    <div class="col-12 col-md-6 col-lg-2">
+      <div class="d-flex flex-column align-items-center gap-4">
 
-    <div class="card shadow-sm">
-      <div class="card-header">
-        <h5 class="mb-0">Tamaño del accesorio</h5>
-      </div>
+        <!-- Rango de ancho -->
+        <div class="text-center">
+          <label class="form-label">Ancho</label>
 
-      <div class="card-body">
+          <input type="range" class="form-range rango-vertical" min="5" max="80" step="0.5"
+            [ngModel]="porcentajeAncho()" (ngModelChange)="cambiarAncho($event)">
 
-        @if (accesorioSeleccionadoId() !== null) {
+          <div>{{ porcentajeAncho() }}%</div>
+        </div>
 
-        <!-- ANCHO -->
-        <label class="form-label">
-          Ancho:
-          <strong>{{ porcentajeAncho() }}%</strong>
-        </label>
+        <!-- Rango de alto -->
+        <div class="text-center">
+          <label class="form-label">Alto</label>
 
-        <input type="range" class="form-range" min="5" max="80" step="0.5" [ngModel]="porcentajeAncho()"
-          (ngModelChange)="cambiarAncho($event)">
+          <input type="range" class="form-range rango-vertical" min="5" max="80" step="0.5" [ngModel]="porcentajeAlto()"
+            (ngModelChange)="cambiarAlto($event)">
 
-        <!-- ALTO -->
-        <label class="form-label mt-3">
-          Alto:
-          <strong>{{ porcentajeAlto() }}%</strong>
-        </label>
-
-        <input type="range" class="form-range" min="5" max="80" step="0.5" [ngModel]="porcentajeAlto()"
-          (ngModelChange)="cambiarAlto($event)">
-
-        } @else {
-
-        <p class="text-muted mb-0">
-          Selecciona un accesorio de la maceta para ajustar su tamaño.
-        </p>
-
-        }
+          <div>{{ porcentajeAlto() }}%</div>
+        </div>
 
       </div>
     </div>
