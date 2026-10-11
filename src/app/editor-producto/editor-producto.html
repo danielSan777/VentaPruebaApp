@@ -28,9 +28,8 @@
           track accesorio.id
           ) {
 
-          <div class="card mb-3" (cdkDragMoved)="registrarPreview()" [cdkDragPreviewClass]="'preview-transparente'"
-            cdkDrag [cdkDragData]="accesorio" [cdkDragDisabled]="estaColocado(accesorio.id)"
-            [class.opacity-50]="estaColocado(accesorio.id)">
+          <div class="card mb-3" [cdkDragPreviewClass]="'preview-transparente'" cdkDrag [cdkDragData]="accesorio"
+            [cdkDragDisabled]="estaColocado(accesorio.id)" [class.opacity-50]="estaColocado(accesorio.id)">
 
             <div class="card-body text-center">
 

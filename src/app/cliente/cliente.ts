@@ -29,6 +29,7 @@ export class Cliente implements OnInit {
     this.configuracion.set(
       datosGuardados.accesorios as AccesorioColocado[]
     );
+
   }
 
 

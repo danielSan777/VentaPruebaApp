@@ -1,21 +1,20 @@
 <div class="container-fluid">
-
+    <h4 class="w-25  text-center">Accesorios</h4>
     <div class="row">
 
         <!-- ACCESORIOS -->
         <div class="col-md-3">
 
-            <h4>Accesorios</h4>
 
             @for(
             accesorio of configuracion();
             track accesorio.accesorioId
             ){
 
-            <button type="button" class="btn btn-outline-primary w-100 mb-2" (click)="agregarAccesorio(accesorio)"
-                [disabled]="estaSeleccionado(accesorio.accesorioId)">
+            <button type="button" class="btn btn-outline-primary w-100 mb-2 d-flex flex-column align-items-center"
+                (click)="agregarAccesorio(accesorio)" [disabled]="estaSeleccionado(accesorio.accesorioId)">
 
-                <img [src]="accesorio.imagen" width="50">
+                <img [src]="accesorio.imagen" width="70" height="70" class="mb-2 object-fit-contain">
 
                 {{ accesorio.nombre }}
 

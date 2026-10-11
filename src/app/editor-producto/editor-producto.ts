@@ -218,7 +218,7 @@ export class EditorProducto {
 
     // Ancho del accesorio como % del visor (≈140px en un visor de 600px)
     const anchoPct = 23;
-    const altoPct = 2;
+    const altoPct = 1;
     // Tamaño aproximado en píxeles, solo para el respaldo y el límite
     const anchoPx = rect.width * anchoPct / 100;
     const altoPx = rect.height * altoPct / 100;  // misma proporción que 140x90
@@ -379,13 +379,6 @@ export class EditorProducto {
 
   }
 
-
-  registrarPreview(): void {
-    const preview = document.querySelector('.cdk-drag-preview');
-    if (preview) {
-      this.rectPreview = preview.getBoundingClientRect();
-    }
-  }
 
 
   seleccionarAccesorio(a: AccesorioColocado): void {
