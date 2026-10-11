@@ -202,6 +202,13 @@ export class EditorProducto {
     );
   }
 
+  registrarPreview(): void {
+    const preview = document.querySelector('.cdk-drag-preview');
+    if (preview) {
+      this.rectPreview = preview.getBoundingClientRect();
+    }
+  }
+
 
   soltarAccesorio(event: CdkDragDrop<AccesorioColocado[]>): void {
 
@@ -216,19 +223,26 @@ export class EditorProducto {
     const visor = event.container.element.nativeElement;
     const rect = visor.getBoundingClientRect();
 
-    // Ancho del accesorio como % del visor (≈140px en un visor de 600px)
-    const anchoPct = 23;
-    const altoPct = 1;
-    // Tamaño aproximado en píxeles, solo para el respaldo y el límite
+    // Ancho inicial como % del visor
+    const anchoPct = 15;
+
+    // Alto en % que mantiene la proporción real de la imagen
+    const img = event.item.element.nativeElement.querySelector('img') as HTMLImageElement | null;
+    const proporcion = img && img.naturalWidth
+      ? img.naturalHeight / img.naturalWidth
+      : 0.65;
+    const altoPct = +(anchoPct * proporcion * (rect.width / rect.height)).toFixed(2);
+
+    // Tamaño en píxeles, para calcular la posición y los límites
     const anchoPx = rect.width * anchoPct / 100;
-    const altoPx = rect.height * altoPct / 100;  // misma proporción que 140x90
+    const altoPx = rect.height * altoPct / 100;
 
     // 1. Posición en PÍXELES, relativa al visor
     let xPx: number;
     let yPx: number;
 
     if (this.rectPreview) {
-      // Donde el usuario vio el preview al arrastrar
+      // Donde el usuario vio el preview mientras arrastraba
       xPx = this.rectPreview.left - rect.left;
       yPx = this.rectPreview.top - rect.top;
     } else {
@@ -266,14 +280,14 @@ export class EditorProducto {
           x,
           y,
           ancho: anchoPct,
-          alto: altoPx  // ya no se usa; el alto sale de la proporción de la imagen
+          alto: altoPct   // porcentaje, no píxeles
         }
       ];
-
     });
-    console.log('colocados:', JSON.stringify(this.accesoriosColocados()));
-
   }
+
+
+
 
 
 

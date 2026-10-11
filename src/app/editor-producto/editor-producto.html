@@ -28,7 +28,8 @@
           track accesorio.id
           ) {
 
-          <div class="card mb-3" [cdkDragPreviewClass]="'preview-transparente'" cdkDrag [cdkDragData]="accesorio"
+          <div class="card mb-3" [cdkDragPreviewClass]="'preview-transparente'" (cdkDragMoved)="registrarPreview()"
+            [cdkDragPreviewClass]="'preview-transparente'" cdkDrag [cdkDragData]="accesorio"
             [cdkDragDisabled]="estaColocado(accesorio.id)" [class.opacity-50]="estaColocado(accesorio.id)">
 
             <div class="card-body text-center">
@@ -58,8 +59,8 @@
             <ng-template cdkDragPreview>
 
               <img [src]="accesorio.imagen" [alt]="accesorio.nombre" style="
-        width: 140px;
-        height: 90px;
+        width: 100px;
+        height: 50px;
         object-fit: contain;
         background: transparent;
       ">
