@@ -3,7 +3,7 @@
     <div class="row">
 
         <!-- ACCESORIOS -->
-        <div class="col-md-3">
+        <div class="col-12 col-md-3 col-lg-3">
 
 
             @for(
@@ -11,14 +11,53 @@
             track accesorio.accesorioId
             ){
 
-            <button type="button" class="btn btn-outline-primary w-100 mb-2 d-flex flex-column align-items-center"
-                (click)="agregarAccesorio(accesorio)" [disabled]="estaSeleccionado(accesorio.accesorioId)">
 
-                <img [src]="accesorio.imagen" width="70" height="70" class="mb-2 object-fit-contain">
+            <div class="card d-flex flex-column align-items-center  mb-2">
 
-                {{ accesorio.nombre }}
+                <div class="d-flex align-items-center justify-content-center">
 
-            </button>
+                    <img [src]="accesorio.imagen" [alt]="accesorio.nombre" style="width: 50%; height: auto;">
+
+
+                </div>
+                <div>{{ accesorio.nombre }}</div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary" (click)="agregarAccesorio(accesorio)"
+                        [disabled]="estaSeleccionado(accesorio.accesorioId)">
+                        Agregar
+                    </button>
+                    <button type="button" class="btn btn-outline-danger"
+                        (click)="quitarAccesorio(accesorio.accesorioId)"
+                        [disabled]="!estaSeleccionado(accesorio.accesorioId)">
+                        Quitar
+                    </button>
+                </div>
+
+                @if (accesorio.accesorioId==1){
+                <div class="mt-3">
+                    <label class="form-label">Color de los lentes</label>
+
+                    <div class="d-flex gap-3">
+                        <label class="d-flex align-items-center gap-1">
+                            <input type="radio" name="colorLentes" value="negro" [(ngModel)]="colorSeleccionado"
+                                (ngModelChange)="cambiarColorLentes($event)">
+                            <span class="color-negro"></span>
+                            Negro
+                        </label>
+
+                        <label class="d-flex align-items-center gap-1">
+                            <input type="radio" name="colorLentes" value="cafe" [(ngModel)]="colorSeleccionado"
+                                (ngModelChange)="cambiarColorLentes($event)">
+                            <span class="color-cafe"></span>
+                            Café
+                        </label>
+                    </div>
+                </div>
+                }
+
+            </div>
+
+
 
             }
 
@@ -28,7 +67,7 @@
         <!-- PRODUCTO -->
         <div class="col-md-9">
 
-            <div class="visor">
+            <div class="visor" #visor>
 
                 <img src="productos/maceta.png" class="maceta">
 
@@ -37,8 +76,21 @@
                 track accesorio.id
                 ) {
 
-                <img [src]="accesorio.imagen" class="accesorio-colocado" [style.left.px]="accesorio.x"
-                    [style.top.px]="accesorio.y" [style.width.px]="accesorio.ancho" [style.height.px]="accesorio.alto">
+                @if(accesorio.accesorioId==1){
+
+                <div class="accesorio-colocado" [style.left.%]=" accesorio.x" [style.top.%]="accesorio.y"
+                    [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
+                    @if (hayLentes()) {
+                    <canvas #canvasLentes></canvas>
+                    }
+
+                </div>
+
+                }@else{
+                <img [src]="accesorio.imagen" class="accesorio-colocado" [style.width.%]="accesorio.ancho"
+                    [style.height.%]="accesorio.alto" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y">
+                }
+
 
                 }
 
