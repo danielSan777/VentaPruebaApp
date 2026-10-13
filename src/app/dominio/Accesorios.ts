@@ -6,6 +6,10 @@ interface Accesorio {
 
   imagen: string;
 
+  tipo?: 'imagen' | 'texto';
+
+  texto?: string;
+
 }
 
 interface AccesorioColocado {
@@ -25,5 +29,9 @@ interface AccesorioColocado {
   ancho: number;
 
   alto: number;
+
+  tipo?: 'imagen' | 'texto';
+
+  texto?: string;
 
 }

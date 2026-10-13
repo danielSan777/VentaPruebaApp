@@ -23,10 +23,11 @@
         <div class="card-body" cdkDropList [cdkDropListData]="accesorios()" #listaAccesorios="cdkDropList"
           [cdkDropListConnectedTo]="[visor]">
 
-          @for (
+          @for(
           accesorio of accesorios();
           track accesorio.id
-          ) {
+          ){
+
 
           <div class="card mb-3" [cdkDragPreviewClass]="'preview-transparente'" (cdkDragMoved)="registrarPreview()"
             [cdkDragPreviewClass]="'preview-transparente'" cdkDrag [cdkDragData]="accesorio"
@@ -34,9 +35,13 @@
 
             <div class="card-body text-center">
 
+              @if (accesorio.tipo === 'texto') {
+              <canvas [appTextoCanvas]="accesorio.texto ?? ''"
+                style="width: 100%; height: 50px; display: block;"></canvas>
+              } @else {
               <img [src]="accesorio.imagen" [alt]="accesorio.nombre" class="img-fluid"
                 style="height: 80px; object-fit: contain;">
-
+              }
               <div class="mt-2">
                 <span class="fw-semibold">
                   {{ accesorio.nombre }}
@@ -57,14 +62,13 @@
 
             <!-- Preview que aparece mientras arrastras -->
             <ng-template cdkDragPreview>
-
-              <img [src]="accesorio.imagen" [alt]="accesorio.nombre" style="
-        width: 100px;
-        height: 50px;
-        object-fit: contain;
-        background: transparent;
-      ">
-
+              @if (accesorio.tipo === 'texto') {
+              <canvas [appTextoCanvas]="accesorio.texto ?? ''"
+                style="width: 100px; height: 25px; display: block;"></canvas>
+              } @else {
+              <img [src]="accesorio.imagen" [alt]="accesorio.nombre"
+                style="width: 100px; height: 50px; object-fit: contain; background: transparent;">
+              }
             </ng-template>
 
 
@@ -115,8 +119,11 @@
                 [style.left.%]="accesorio.x" [style.top.%]="accesorio.y" (click)="seleccionarAccesorio(accesorio)"
                 (pointerdown)="iniciarArrastre($event, accesorio)">
 
+                @if (accesorio.tipo === 'texto') {
+                <canvas [appTextoCanvas]="accesorio.texto ?? ''"></canvas>
+                } @else {
                 <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre">
-
+                }
 
 
 

@@ -17,10 +17,12 @@ import {
   CdkDragPreview
 } from '@angular/cdk/drag-drop';
 import { JsonPipe } from '@angular/common';
+import { TextoCanvas } from './texto-canvas';
+
 
 @Component({
   standalone: true,
-  imports: [CdkDrag, FormsModule, JsonPipe, CdkDropList, CdkDragPreview],
+  imports: [CdkDrag, FormsModule, JsonPipe, CdkDropList, CdkDragPreview, TextoCanvas],
   selector: 'app-editor-producto',
   styleUrl: './editor-producto.css',
   templateUrl: './editor-producto.html',
@@ -62,6 +64,9 @@ export class EditorProducto {
 
 
 
+
+
+
   // ==========================================
   // ACCESORIOS DISPONIBLES
   // ==========================================
@@ -88,6 +93,13 @@ export class EditorProducto {
       id: 4,
       nombre: 'vaso de café',
       imagen: 'accesorios/vaso_cafe.png'
+    },
+    {
+      id: 5,
+      nombre: 'Nombre',
+      imagen: '',
+      tipo: 'texto',
+      texto: 'Lcda. Fernanda Garcia Z.'
     }
 
   ]);
@@ -109,98 +121,6 @@ export class EditorProducto {
 
 
 
-
-  ngAfterViewInit(): void {
-
-    this.imagenLentes.src = '/accesorios/lentes.png';
-
-    this.imagenLentes.onload = () => {
-      this.dibujarLentes();
-    };
-
-  }
-
-
-  dibujarLentes(): void {
-
-    const canvas = this.canvasLentes.nativeElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    canvas.width = this.imagenLentes.width;
-    canvas.height = this.imagenLentes.height;
-
-    console.log("ancho-->" + canvas.width);
-    console.log("alto-->" + canvas.height);
-
-    ctx.clearRect(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-    ctx.drawImage(
-      this.imagenLentes,
-      0,
-      0
-    );
-  }
-
-
-  cambiarColor(): void {
-
-    const canvas = this.canvasLentes.nativeElement;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) return;
-
-    const imageData = ctx.getImageData(
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-    const pixels = imageData.data;
-
-    const r = parseInt(
-      this.colorSeleccionado.substring(1, 3),
-      16
-    );
-
-    const g = parseInt(
-      this.colorSeleccionado.substring(3, 5),
-      16
-    );
-
-    const b = parseInt(
-      this.colorSeleccionado.substring(5, 7),
-      16
-    );
-
-    for (let i = 0; i < pixels.length; i += 4) {
-
-      const alpha = pixels[i + 3];
-
-      // Solo modificamos los píxeles visibles
-      if (alpha > 0) {
-
-        pixels[i] = r;
-        pixels[i + 1] = g;
-        pixels[i + 2] = b;
-
-        // NO modificamos alpha
-      }
-    }
-
-    ctx.putImageData(
-      imageData,
-      0,
-      0
-    );
-  }
 
   registrarPreview(): void {
     const preview = document.querySelector('.cdk-drag-preview');
@@ -227,10 +147,15 @@ export class EditorProducto {
     const anchoPct = 15;
 
     // Alto en % que mantiene la proporción real de la imagen
+
+    const esTexto = accesorio.tipo === 'texto';
     const img = event.item.element.nativeElement.querySelector('img') as HTMLImageElement | null;
-    const proporcion = img && img.naturalWidth
-      ? img.naturalHeight / img.naturalWidth
-      : 0.65;
+
+    const proporcion = esTexto
+      ? 0.25                                   // alto/ancho del canvas de texto
+      : (img && img.naturalWidth ? img.naturalHeight / img.naturalWidth : 0.65);
+
+
     const altoPct = +(anchoPct * proporcion * (rect.width / rect.height)).toFixed(2);
 
     // Tamaño en píxeles, para calcular la posición y los límites
@@ -280,7 +205,9 @@ export class EditorProducto {
           x,
           y,
           ancho: anchoPct,
-          alto: altoPct   // porcentaje, no píxeles
+          alto: altoPct,
+          tipo: accesorio.tipo ?? 'imagen',
+          texto: accesorio.texto,
         }
       ];
     });
