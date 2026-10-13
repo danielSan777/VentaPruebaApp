@@ -30,8 +30,8 @@
 
 
           <div class="card mb-3" [cdkDragPreviewClass]="'preview-transparente'" (cdkDragMoved)="registrarPreview()"
-            [cdkDragPreviewClass]="'preview-transparente'" cdkDrag [cdkDragData]="accesorio"
-            [cdkDragDisabled]="estaColocado(accesorio.id)" [class.opacity-50]="estaColocado(accesorio.id)">
+            cdkDrag [cdkDragData]="accesorio" [cdkDragDisabled]="estaColocado(accesorio.id)"
+            [class.opacity-50]="estaColocado(accesorio.id)">
 
             <div class="card-body text-center">
 
@@ -178,56 +178,16 @@
 
 
 
-
-
-
     <!-- ================================= -->
-    <!-- INFORMACIÓN -->
+    <!-- GUARDAR -->
     <!-- ================================= -->
 
-    <div class="col-12 col-md-6">
+    <div class="mt-4">
 
-      <div class="card shadow-sm">
-
-        <div class="card-header">
-          <h5 class="mb-0">Posición</h5>
-        </div>
-
-        <div class="card-body">
-
-          <p class="mb-2">
-            X:
-            <strong>{{ posicion().x }}</strong>
-          </p>
-
-          <p class="mb-2">
-            Y:
-            <strong>{{ posicion().y }}</strong>
-          </p>
-
-          <pre class="bg-light p-2 rounded">
-{{ posicion() | json }}
-          </pre>
-
-        </div>
-
-      </div>
+      <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">
+        Guardar configuración
+      </button>
 
     </div>
 
   </div>
-
-
-  <!-- ================================= -->
-  <!-- GUARDAR -->
-  <!-- ================================= -->
-
-  <div class="mt-4">
-
-    <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">
-      Guardar configuración
-    </button>
-
-  </div>
-
-</div>

@@ -60,14 +60,6 @@ export class EditorProducto {
   porcentajeAncho = signal(23.3);
   porcentajeAlto = signal(18);
 
-
-
-
-
-
-
-
-
   // ==========================================
   // ACCESORIOS DISPONIBLES
   // ==========================================
@@ -79,29 +71,29 @@ export class EditorProducto {
       nombre: 'Lentes',
       imagen: 'accesorios/lentes.png'
     },
-
     {
       id: 2,
-      nombre: 'caja-herramienta',
-      imagen: 'accesorios/caja_herramientas.png'
-    },
-    {
-      id: 3,
-      nombre: 'regalo',
-      imagen: 'accesorios/regalo.png'
-    },
-    {
-      id: 4,
-      nombre: 'vaso de café',
-      imagen: 'accesorios/vaso_cafe.png'
-    },
-    {
-      id: 5,
       nombre: 'Nombre',
       imagen: '',
       tipo: 'texto',
       texto: 'Ingrese su nombre.'
+    },
+    {
+      id: 3,
+      nombre: 'caja-herramienta',
+      imagen: 'accesorios/caja_herramientas.png'
+    },
+    {
+      id: 4,
+      nombre: 'regalo',
+      imagen: 'accesorios/regalo.png'
+    },
+    {
+      id: 5,
+      nombre: 'vaso de café',
+      imagen: 'accesorios/vaso_cafe.png'
     }
+
 
   ]);
 
