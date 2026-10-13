@@ -29,7 +29,7 @@ export class TextoCanvas implements AfterViewInit, OnDestroy {
         this.observer = new ResizeObserver(() => this.dibujar());
         this.observer.observe(this.canvas);
         // Pide la fuente y redibuja cuando esté lista
-        document.fonts.load('35px Lobster').then(() => this.dibujar());
+        document.fonts.load('bold 35px Lobster').then(() => this.dibujar());
     }
 
     ngOnDestroy(): void {
@@ -53,7 +53,7 @@ export class TextoCanvas implements AfterViewInit, OnDestroy {
         ctx.clearRect(0, 0, w, h);
 
         // Medir el texto con un tamaño base fijo
-        ctx.font = `100px Lobster, cursive`;
+        ctx.font = `bold 100px Lobster, cursive`;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'alphabetic';
 
