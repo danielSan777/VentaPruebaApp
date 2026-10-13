@@ -17,7 +17,8 @@ import {
   CdkDragPreview
 } from '@angular/cdk/drag-drop';
 import { JsonPipe } from '@angular/common';
-import { TextoCanvas } from './texto-canvas';
+import { TextoCanvas } from '../directivas/texto-canvas';
+
 
 
 @Component({
@@ -99,7 +100,7 @@ export class EditorProducto {
       nombre: 'Nombre',
       imagen: '',
       tipo: 'texto',
-      texto: 'Lcda. Fernanda Garcia Z.'
+      texto: 'Ingrese su nombre.'
     }
 
   ]);

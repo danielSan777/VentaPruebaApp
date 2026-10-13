@@ -4,10 +4,13 @@ import {
   computed
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TextoCanvas } from '../directivas/texto-canvas';
+
 
 @Component({
   imports: [
-    FormsModule
+    FormsModule,
+    TextoCanvas
   ],
   selector: 'app-cliente',
   styleUrl: './cliente.css',
@@ -26,11 +29,18 @@ export class Cliente implements OnInit {
   @ViewChild('canvasLentes')
   canvasLentes!: ElementRef<HTMLCanvasElement>;
 
-
   private imagenLentes = new Image();
 
   @ViewChild('visor')
   visor!: ElementRef<HTMLDivElement>;
+
+  nombreCliente = signal('');
+
+  // true cuando el accesorio de texto está agregado al visor
+  hayTexto = computed(() =>
+    this.accesoriosSeleccionados().some(a => a.tipo === 'texto')
+  );
+
 
 
   @ViewChild('canvasLentes')

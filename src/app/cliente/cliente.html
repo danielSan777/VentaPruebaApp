@@ -16,8 +16,12 @@
 
                 <div class="d-flex align-items-center justify-content-center">
 
+                    @if (accesorio.tipo === 'texto') {
+                    <canvas [appTextoCanvas]="accesorio.texto ?? ''"
+                        style="width: 100%; height: 40px; display: block;"></canvas>
+                    } @else {
                     <img [src]="accesorio.imagen" [alt]="accesorio.nombre" style="width: 50%; height: auto;">
-
+                    }
 
                 </div>
                 <div>{{ accesorio.nombre }}</div>
@@ -54,11 +58,7 @@
                     </div>
                 </div>
                 }
-
             </div>
-
-
-
             }
 
         </div>
@@ -66,36 +66,51 @@
 
         <!-- PRODUCTO -->
         <div class="col-md-9">
+            <div class="row">
 
-            <div class="visor" #visor>
+                <div class="col-auto">
+                    <div class="visor" #visor>
 
-                <img src="productos/maceta.png" class="maceta">
+                        <img src="productos/maceta_vacia.png" class="maceta">
 
-                @for (
-                accesorio of accesoriosSeleccionados();
-                track accesorio.id
-                ) {
+                        @for (accesorio of accesoriosSeleccionados(); track accesorio.id) {
 
-                @if(accesorio.accesorioId==1){
+                        @if (accesorio.tipo === 'texto') {
 
-                <div class="accesorio-colocado" [style.left.%]=" accesorio.x" [style.top.%]="accesorio.y"
-                    [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
-                    @if (hayLentes()) {
-                    <canvas #canvasLentes></canvas>
-                    }
+                        <div class="accesorio-colocado" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y"
+                            [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
+                            <canvas [appTextoCanvas]="nombreCliente() || (accesorio.texto ?? '')"></canvas>
+                        </div>
 
+                        } @else if (accesorio.accesorioId == 1) {
+
+                        <div class="accesorio-colocado" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y"
+                            [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
+                            @if (hayLentes()) {
+                            <canvas #canvasLentes></canvas>
+                            }
+                        </div>
+
+                        } @else {
+
+                        <img [src]="accesorio.imagen" class="accesorio-colocado" [style.width.%]="accesorio.ancho"
+                            [style.height.%]="accesorio.alto" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y">
+                        }
+                        }
+
+                    </div>
                 </div>
 
-                }@else{
-                <img [src]="accesorio.imagen" class="accesorio-colocado" [style.width.%]="accesorio.ancho"
-                    [style.height.%]="accesorio.alto" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y">
-                }
-
-
+                <!-- Campo del nombre, al lado del visor -->
+                @if (hayTexto()) {
+                <div class="col">
+                    <label for="nombre" class="form-label">Ingrese su nombre</label>
+                    <input id="nombre" type="text" class="form-control" maxlength="30" placeholder="Escriba su nombre"
+                        [ngModel]="nombreCliente()" (ngModelChange)="nombreCliente.set($event)">
+                </div>
                 }
 
             </div>
-
         </div>
 
     </div>
