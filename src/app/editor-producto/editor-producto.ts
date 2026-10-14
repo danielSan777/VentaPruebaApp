@@ -5,7 +5,8 @@ import {
   signal,
   NgZone,
   inject,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -18,7 +19,8 @@ import {
 } from '@angular/cdk/drag-drop';
 import { JsonPipe } from '@angular/common';
 import { TextoCanvas } from '../directivas/texto-canvas';
-
+import Swal from 'sweetalert2'
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -38,10 +40,11 @@ export class EditorProducto {
 
   private imagenLentes = new Image();
 
-
   private rectPreview: DOMRect | null = null;
 
   posicionesIniciales = new Map<number, { x: number; y: number }>();
+
+  private router = inject(Router);
 
   posicion = signal({
     x: 150,
@@ -206,11 +209,6 @@ export class EditorProducto {
     });
   }
 
-
-
-
-
-
   iniciarArrastre(event: PointerEvent, a: AccesorioColocado): void {
     event.preventDefault();
 
@@ -294,7 +292,7 @@ export class EditorProducto {
   }
 
 
-  guardarConfiguracion(): void {
+  async guardarConfiguracion(): Promise<void> {
 
     const configuracion = {
       productoId: 1,
@@ -306,10 +304,15 @@ export class EditorProducto {
       JSON.stringify(configuracion)
     );
 
-    console.log(
-      'Configuración:',
-      configuracion
-    );
+    await Swal.fire({
+      title: '¡Guardado!',
+      text: 'La configuración se guardó correctamente.',
+      icon: 'success',
+      confirmButtonText: 'Aceptar'
+    });
+
+    // Navegar después de aceptar
+    await this.router.navigate(['/cliente']);
 
   }
 
@@ -353,6 +356,28 @@ export class EditorProducto {
     );
   }
 
+
+
+  async eliminarConfiguracion(): Promise<void> {
+    try {
+      localStorage.removeItem('configuracionMaceta');
+
+      await Swal.fire({
+        title: '¡Eliminada!',
+        text: 'Configuración eliminada con éxito.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+      });
+
+    } catch (error) {
+      await Swal.fire({
+        title: 'Error',
+        text: 'No se pudo eliminar la configuración.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar'
+      });
+    }
+  }
 
 
 
