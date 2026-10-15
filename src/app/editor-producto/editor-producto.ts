@@ -36,6 +36,10 @@ export class EditorProducto {
   @ViewChild('canvasLentes')
   canvasLentes!: ElementRef<HTMLCanvasElement>;
 
+  // Contenedor del visor (para calcular el centro al pulsar "Agregar")
+  @ViewChild('visorRef')
+  visorRef!: ElementRef<HTMLDivElement>;
+
   colorSeleccionado = '#0000ff';
 
   private imagenLentes = new Image();
@@ -65,6 +69,9 @@ export class EditorProducto {
 
   // Rotación del accesorio seleccionado (en grados)
   rotacion = signal({ rotX: 0, rotY: 0, rotZ: 0 });
+
+  // Modo espejo del accesorio seleccionado (voltea izquierda <-> derecha)
+  espejo = signal(false);
 
   // ==========================================
   // ACCESORIOS DISPONIBLES
@@ -330,6 +337,22 @@ export class EditorProducto {
       rotY: a.rotY ?? 0,
       rotZ: a.rotZ ?? 0,
     });
+    this.espejo.set(a.espejo ?? false);
+  }
+
+  // ==========================================
+  // MODO ESPEJO
+  // ==========================================
+
+  cambiarEspejo(valor: boolean): void {
+    this.espejo.set(valor);
+
+    const id = this.accesorioSeleccionadoId();
+    if (id === null) return;
+
+    this.accesoriosColocados.update(lista =>
+      lista.map(a => (a.id === id ? { ...a, espejo: valor } : a))
+    );
   }
 
   // ==========================================
@@ -354,7 +377,8 @@ export class EditorProducto {
   }
 
   transformar(a: AccesorioColocado): string {
-    return `perspective(600px) rotateX(${a.rotX ?? 0}deg) rotateY(${a.rotY ?? 0}deg) rotateZ(${a.rotZ ?? 0}deg)`;
+    const espejo = a.espejo ? ' scaleX(-1)' : '';
+    return `perspective(600px) rotateX(${a.rotX ?? 0}deg) rotateY(${a.rotY ?? 0}deg) rotateZ(${a.rotZ ?? 0}deg)${espejo}`;
   }
 
   cambiarAncho(valor: number): void {
@@ -491,6 +515,66 @@ export class EditorProducto {
   }
 
 
+  // Desde el panel: agrega el accesorio en el centro del visor
+  async agregarAlCentro(accesorio: Accesorio): Promise<void> {
+
+    // Solo uno por tipo
+    if (this.estaColocado(accesorio.id)) return;
+
+    const rect = this.visorRef.nativeElement.getBoundingClientRect();
+
+    // Mismo ancho inicial que al arrastrar
+    const anchoPct = 15;
+
+    // Proporción real de la imagen (el texto usa 0.25)
+    let proporcion = 0.65;
+
+    if (accesorio.tipo === 'texto') {
+      proporcion = 0.25;
+    } else {
+      proporcion = await this.proporcionImagen(accesorio.imagen);
+    }
+
+    const altoPct = +(anchoPct * proporcion * (rect.width / rect.height)).toFixed(2);
+
+    // Centrado: la mitad del espacio sobrante a cada lado
+    const x = +((100 - anchoPct) / 2).toFixed(2);
+    const y = +((100 - altoPct) / 2).toFixed(2);
+
+    this.accesoriosColocados.update(lista => {
+
+      // Por si se pulsó dos veces mientras cargaba la imagen
+      if (lista.some(a => a.accesorioId === accesorio.id)) return lista;
+
+      return [
+        ...lista,
+        {
+          id: this.siguienteId++,
+          accesorioId: accesorio.id,
+          nombre: accesorio.nombre,
+          imagen: accesorio.imagen,
+          x,
+          y,
+          ancho: anchoPct,
+          alto: altoPct,
+          tipo: accesorio.tipo ?? 'imagen',
+          texto: accesorio.texto,
+        }
+      ];
+    });
+  }
+
+  // alto / ancho natural de una imagen (0.65 si no se puede cargar)
+  private proporcionImagen(src: string): Promise<number> {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () =>
+        resolve(img.naturalWidth ? img.naturalHeight / img.naturalWidth : 0.65);
+      img.onerror = () => resolve(0.65);
+      img.src = src;
+    });
+  }
+
   // Desde el panel: elimina del visor el accesorio colocado de ese tipo
   eliminarPorTipo(accesorioId: number): void {
     const colocado = this.accesoriosColocados().find(a => a.accesorioId === accesorioId);
@@ -504,6 +588,7 @@ export class EditorProducto {
     if (this.accesorioSeleccionadoId() === a.id) {
       this.accesorioSeleccionadoId.set(null);
       this.rotacion.set({ rotX: 0, rotY: 0, rotZ: 0 });
+      this.espejo.set(false);
     }
   }
 

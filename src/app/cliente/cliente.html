@@ -30,11 +30,16 @@
                         [disabled]="estaSeleccionado(accesorio.accesorioId)">
                         Agregar
                     </button>
+                    @if(accesorio.accesorioId!=2){
                     <button type="button" class="btn btn-outline-danger"
                         (click)="quitarAccesorio(accesorio.accesorioId)"
                         [disabled]="!estaSeleccionado(accesorio.accesorioId)">
                         Quitar
                     </button>
+
+                    }
+
+
                 </div>
 
                 @if (accesorio.accesorioId==1){

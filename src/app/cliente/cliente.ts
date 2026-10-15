@@ -185,9 +185,10 @@ export class Cliente implements OnInit {
   );
 
 
-  // Rotación guardada en el editor (si el accesorio no tiene, queda en 0°)
+  // Rotación y modo espejo guardados en el editor (si no tiene, queda normal)
   transformar(a: AccesorioColocado): string {
-    return `perspective(600px) rotateX(${a.rotX ?? 0}deg) rotateY(${a.rotY ?? 0}deg) rotateZ(${a.rotZ ?? 0}deg)`;
+    const espejo = a.espejo ? ' scaleX(-1)' : '';
+    return `perspective(600px) rotateX(${a.rotX ?? 0}deg) rotateY(${a.rotY ?? 0}deg) rotateZ(${a.rotZ ?? 0}deg)${espejo}`;
   }
 
 

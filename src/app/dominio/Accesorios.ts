@@ -36,4 +36,6 @@ interface AccesorioColocado {
 
   rotX?: number; rotY?: number; rotZ?: number; // grados
 
+  espejo?: boolean;
 }
+

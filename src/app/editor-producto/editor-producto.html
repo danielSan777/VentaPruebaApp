@@ -49,19 +49,23 @@
 
 
 
-              @if(estaColocado(accesorio.id)){
               <div class="d-flex flex-column gap-2">
+
+                @if (estaColocado(accesorio.id)) {
                 <small class="text-muted">
                   Ya colocado
                 </small>
 
-                <button class="btn btn-danger" (click)="eliminarPorTipo(accesorio.id)">
+                <button type="button" class="btn btn-danger" (click)="eliminarPorTipo(accesorio.id)">
                   Eliminar
                 </button>
+                } @else {
+                <button type="button" class="btn btn-primary" (click)="agregarAlCentro(accesorio)">
+                  Agregar
+                </button>
+                }
+
               </div>
-
-
-              }
 
             </div>
 
@@ -105,7 +109,7 @@
 
         <div class="card-body">
 
-          <div class="visor mx-auto ">
+          <div class="visor mx-auto " #visorRef>
 
             <!-- Maceta (flujo normal, da el tamaño al visor) -->
             <img src="productos/maceta_vacia.png" class="maceta" alt="Maceta">
@@ -214,6 +218,13 @@
         <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reiniciarRotacion()">
           Reiniciar giro
         </button>
+
+        <!-- Modo espejo: lo de la izquierda pasa a la derecha -->
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="modoEspejo" [ngModel]="espejo()"
+            (ngModelChange)="cambiarEspejo($event)">
+          <label class="form-check-label" for="modoEspejo">Modo espejo</label>
+        </div>
 
       </div>
     </div>
