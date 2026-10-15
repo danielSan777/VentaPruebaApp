@@ -34,4 +34,6 @@ interface AccesorioColocado {
 
   texto?: string;
 
+  rotX?: number; rotY?: number; rotZ?: number; // grados
+
 }

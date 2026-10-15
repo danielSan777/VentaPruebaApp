@@ -185,6 +185,12 @@ export class Cliente implements OnInit {
   );
 
 
+  // Rotación guardada en el editor (si el accesorio no tiene, queda en 0°)
+  transformar(a: AccesorioColocado): string {
+    return `perspective(600px) rotateX(${a.rotX ?? 0}deg) rotateY(${a.rotY ?? 0}deg) rotateZ(${a.rotZ ?? 0}deg)`;
+  }
+
+
   private agregarPorDefecto(lista: AccesorioColocado[]): void {
     const obligatorios = [1, 2];
 
@@ -198,7 +204,12 @@ export class Cliente implements OnInit {
     this.accesoriosSeleccionados.set(
       elegidos.map(a => ({ ...a, id: this.siguienteId++ }))
     );
+
   }
+
+
+
+
 
 
 

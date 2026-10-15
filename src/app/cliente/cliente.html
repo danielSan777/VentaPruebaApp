@@ -79,22 +79,30 @@
 
                         <div class="accesorio-colocado" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y"
                             [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
-                            <canvas [appTextoCanvas]="nombreCliente() || (accesorio.texto ?? '')"></canvas>
+                            <div class="contenido-3d" [style.transform]="transformar(accesorio)">
+                                <canvas [appTextoCanvas]="nombreCliente() || (accesorio.texto ?? '')"></canvas>
+                            </div>
                         </div>
 
                         } @else if (accesorio.accesorioId == 1) {
 
                         <div class="accesorio-colocado" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y"
                             [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
-                            @if (hayLentes()) {
-                            <canvas #canvasLentes></canvas>
-                            }
+                            <div class="contenido-3d" [style.transform]="transformar(accesorio)">
+                                @if (hayLentes()) {
+                                <canvas #canvasLentes></canvas>
+                                }
+                            </div>
                         </div>
 
                         } @else {
 
-                        <img [src]="accesorio.imagen" class="accesorio-colocado" [style.width.%]="accesorio.ancho"
-                            [style.height.%]="accesorio.alto" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y">
+                        <div class="accesorio-colocado" [style.left.%]="accesorio.x" [style.top.%]="accesorio.y"
+                            [style.width.%]="accesorio.ancho" [style.height.%]="accesorio.alto">
+                            <div class="contenido-3d" [style.transform]="transformar(accesorio)">
+                                <img [src]="accesorio.imagen" [alt]="accesorio.nombre">
+                            </div>
+                        </div>
                         }
                         }
 

@@ -119,11 +119,13 @@
                 [style.left.%]="accesorio.x" [style.top.%]="accesorio.y" (click)="seleccionarAccesorio(accesorio)"
                 (pointerdown)="iniciarArrastre($event, accesorio)">
 
-                @if (accesorio.tipo === 'texto') {
-                <canvas [appTextoCanvas]="accesorio.texto ?? ''"></canvas>
-                } @else {
-                <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre">
-                }
+                <div class="contenido-3d" [style.transform]="transformar(accesorio)">
+                  @if (accesorio.tipo === 'texto') {
+                  <canvas [appTextoCanvas]="accesorio.texto ?? ''"></canvas>
+                  } @else {
+                  <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre">
+                  }
+                </div>
 
                 @if (accesorioSeleccionadoId() === accesorio.id) {
                 <span class="handle nw" (pointerdown)="iniciarRedimension($event, accesorio, 'nw')"></span>
@@ -180,9 +182,36 @@
           <div>{{ porcentajeAlto() }}%</div>
         </div>
 
+        <!-- Giro izquierda / derecha -->
+        <div class="text-center w-100">
+          <label class="form-label">Giro izq/der</label>
+          <input type="range" class="form-range" min="-180" max="180" step="1" [ngModel]="rotacion().rotY"
+            (ngModelChange)="cambiarRotacion('rotY', $event)">
+          <div>{{ rotacion().rotY }}°</div>
+        </div>
+
+        <!-- Inclinar atrás / adelante -->
+        <div class="text-center w-100">
+          <label class="form-label">Inclinar atrás/adelante</label>
+          <input type="range" class="form-range" min="-90" max="90" step="1" [ngModel]="rotacion().rotX"
+            (ngModelChange)="cambiarRotacion('rotX', $event)">
+          <div>{{ rotacion().rotX }}°</div>
+        </div>
+
+        <!-- Giro plano -->
+        <div class="text-center w-100">
+          <label class="form-label">Giro plano</label>
+          <input type="range" class="form-range" min="-180" max="180" step="1" [ngModel]="rotacion().rotZ"
+            (ngModelChange)="cambiarRotacion('rotZ', $event)">
+          <div>{{ rotacion().rotZ }}°</div>
+        </div>
+
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reiniciarRotacion()">
+          Reiniciar giro
+        </button>
+
       </div>
     </div>
-
 
 
     <!-- ================================= -->

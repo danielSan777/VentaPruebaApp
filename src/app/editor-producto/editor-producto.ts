@@ -63,6 +63,9 @@ export class EditorProducto {
   porcentajeAncho = signal(23.3);
   porcentajeAlto = signal(18);
 
+  // Rotación del accesorio seleccionado (en grados)
+  rotacion = signal({ rotX: 0, rotY: 0, rotZ: 0 });
+
   // ==========================================
   // ACCESORIOS DISPONIBLES
   // ==========================================
@@ -322,6 +325,36 @@ export class EditorProducto {
     this.accesorioSeleccionadoId.set(a.id);
     this.porcentajeAncho.set(a.ancho);
     this.porcentajeAlto.set(a.alto);
+    this.rotacion.set({
+      rotX: a.rotX ?? 0,
+      rotY: a.rotY ?? 0,
+      rotZ: a.rotZ ?? 0,
+    });
+  }
+
+  // ==========================================
+  // ROTACIÓN
+  // ==========================================
+
+  cambiarRotacion(eje: 'rotX' | 'rotY' | 'rotZ', valor: number): void {
+    this.rotacion.update(r => ({ ...r, [eje]: valor }));
+
+    const id = this.accesorioSeleccionadoId();
+    if (id === null) return;
+
+    this.accesoriosColocados.update(lista =>
+      lista.map(a => (a.id === id ? { ...a, [eje]: valor } : a))
+    );
+  }
+
+  reiniciarRotacion(): void {
+    this.cambiarRotacion('rotX', 0);
+    this.cambiarRotacion('rotY', 0);
+    this.cambiarRotacion('rotZ', 0);
+  }
+
+  transformar(a: AccesorioColocado): string {
+    return `perspective(600px) rotateX(${a.rotX ?? 0}deg) rotateY(${a.rotY ?? 0}deg) rotateZ(${a.rotZ ?? 0}deg)`;
   }
 
   cambiarAncho(valor: number): void {
