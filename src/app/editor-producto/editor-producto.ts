@@ -491,7 +491,21 @@ export class EditorProducto {
   }
 
 
+  // Desde el panel: elimina del visor el accesorio colocado de ese tipo
+  eliminarPorTipo(accesorioId: number): void {
+    const colocado = this.accesoriosColocados().find(a => a.accesorioId === accesorioId);
+    if (colocado) this.eliminarAccesorio(colocado);
+  }
 
+  eliminarAccesorio(a: AccesorioColocado): void {
+    this.accesoriosColocados.update(lista => lista.filter(i => i.id !== a.id));
+
+    // Si era el seleccionado, limpiar la selección y los controles
+    if (this.accesorioSeleccionadoId() === a.id) {
+      this.accesorioSeleccionadoId.set(null);
+      this.rotacion.set({ rotX: 0, rotY: 0, rotZ: 0 });
+    }
+  }
 
 
 
