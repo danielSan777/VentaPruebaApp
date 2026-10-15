@@ -41,6 +41,7 @@ export class Cliente implements OnInit {
     this.accesoriosSeleccionados().some(a => a.tipo === 'texto')
   );
 
+  private siguienteId = 1;
 
 
   @ViewChild('canvasLentes')
@@ -65,37 +66,22 @@ export class Cliente implements OnInit {
   }
 
 
-
   ngOnInit(): void {
-
-    const datos = localStorage.getItem(
-      'configuracionProducto'
-    );
-
-    if (!datos) {
-      return;
-    }
+    const datos = localStorage.getItem('configuracionProducto');
+    if (!datos) return;
 
     const datosGuardados = JSON.parse(datos);
+    const lista = datosGuardados.accesorios as AccesorioColocado[];
 
-    this.configuracion.set(
-      datosGuardados.accesorios as AccesorioColocado[]
-    );
+    this.configuracion.set(lista);
+    this.agregarPorDefecto(lista);
   }
 
-
-  agregarAccesorio(
-    accesorio: AccesorioColocado
-  ): void {
-
+  agregarAccesorio(accesorio: AccesorioColocado): void {
     this.accesoriosSeleccionados.update(lista => [
       ...lista,
-      {
-        ...accesorio,
-        id: Date.now()
-      }
+      { ...accesorio, id: this.siguienteId++ }
     ]);
-    /* console.log("accesorios agregados-->", this.accesoriosSeleccionados()); */
   }
 
 
@@ -120,9 +106,10 @@ export class Cliente implements OnInit {
 
   dibujarLentes(canvas: HTMLCanvasElement, ancho: number,
     alto: number): void {
-
-    const anchoPx = this.visor.nativeElement.clientWidth * ancho / 100;
-    const altoPx = this.visor.nativeElement.clientHeight * alto / 100;
+    const visor = canvas.closest('.visor') as HTMLElement;
+    if (!visor) return;
+    const anchoPx = visor.clientWidth * ancho / 100;
+    const altoPx = visor.clientHeight * alto / 100;
 
 
     const contexto = canvas.getContext('2d');
@@ -191,12 +178,29 @@ export class Cliente implements OnInit {
     ctx.globalCompositeOperation = 'source-over';
   }
 
-
   hayLentes = computed(() =>
     this.accesoriosSeleccionados().some(
       a => a.accesorioId === 1
     )
   );
+
+
+  private agregarPorDefecto(lista: AccesorioColocado[]): void {
+    const obligatorios = [1, 2];
+
+    // Los accesorios con id 1 y 2 (si existen en la configuración)
+    const elegidos = lista.filter(a => obligatorios.includes(a.accesorioId));
+
+    // Más otro cualquiera: el primero que no sea 1 ni 2
+    const otro = lista.find(a => !obligatorios.includes(a.accesorioId));
+    if (otro) elegidos.push(otro);
+
+    this.accesoriosSeleccionados.set(
+      elegidos.map(a => ({ ...a, id: this.siguienteId++ }))
+    );
+  }
+
+
 
 
 

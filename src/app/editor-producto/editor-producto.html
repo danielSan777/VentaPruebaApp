@@ -125,6 +125,13 @@
                 <img draggable="false" [src]="accesorio.imagen" [alt]="accesorio.nombre">
                 }
 
+                @if (accesorioSeleccionadoId() === accesorio.id) {
+                <span class="handle nw" (pointerdown)="iniciarRedimension($event, accesorio, 'nw')"></span>
+                <span class="handle ne" (pointerdown)="iniciarRedimension($event, accesorio, 'ne')"></span>
+                <span class="handle sw" (pointerdown)="iniciarRedimension($event, accesorio, 'sw')"></span>
+                <span class="handle se" (pointerdown)="iniciarRedimension($event, accesorio, 'se')"></span>
+                }
+
 
 
               </div>

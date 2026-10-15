@@ -215,3 +215,43 @@ button {
   height: 100%;
   pointer-events: none;
 }
+
+.accesorio-colocado.seleccionado {
+  outline: 1px dashed #0d6efd;
+}
+
+.handle {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 2px solid #0d6efd;
+  border-radius: 50%;
+  z-index: 20;
+  touch-action: none;
+  pointer-events: auto;
+}
+
+.handle.nw {
+  top: -7px;
+  left: -7px;
+  cursor: nwse-resize;
+}
+
+.handle.ne {
+  top: -7px;
+  right: -7px;
+  cursor: nesw-resize;
+}
+
+.handle.sw {
+  bottom: -7px;
+  left: -7px;
+  cursor: nesw-resize;
+}
+
+.handle.se {
+  bottom: -7px;
+  right: -7px;
+  cursor: nwse-resize;
+}

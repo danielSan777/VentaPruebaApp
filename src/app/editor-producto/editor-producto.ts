@@ -380,6 +380,86 @@ export class EditorProducto {
   }
 
 
+  iniciarRedimension(
+    event: PointerEvent,
+    a: AccesorioColocado,
+    esquina: 'nw' | 'ne' | 'sw' | 'se'
+  ): void {
+    event.preventDefault();
+    event.stopPropagation(); // evita que se active el arrastre del accesorio
+
+    const handle = event.currentTarget as HTMLElement;
+    const visor = handle.closest('.visor') as HTMLElement;
+    if (!visor) return;
+
+    const rect = visor.getBoundingClientRect();
+
+    // Estado inicial en píxeles
+    const anchoIni = (a.ancho / 100) * rect.width;
+    const altoIni = (a.alto / 100) * rect.height;
+    const izqIni = (a.x / 100) * rect.width;
+    const arrIni = (a.y / 100) * rect.height;
+    const proporcion = anchoIni / altoIni;
+
+    const hacia_este = esquina.includes('e');
+    const hacia_sur = esquina.includes('s');
+
+    // La esquina opuesta se queda fija
+    const anclaX = hacia_este ? izqIni : izqIni + anchoIni;
+    const anclaY = hacia_sur ? arrIni : arrIni + altoIni;
+
+    const inicioX = event.clientX;
+    const inicioY = event.clientY;
+
+    // Límites: mínimo 5%, máximo 80% (igual que los sliders) y sin salirse del visor
+    const minAncho = rect.width * 0.05;
+    const espacioX = hacia_este ? rect.width - anclaX : anclaX;
+    const espacioY = hacia_sur ? rect.height - anclaY : anclaY;
+    const maxAlto = Math.min(espacioY, rect.height * 0.8);
+    const maxAncho = Math.min(espacioX, rect.width * 0.8, maxAlto * proporcion);
+
+    handle.setPointerCapture(event.pointerId);
+
+    const mover = (e: PointerEvent) => {
+      const dx = (e.clientX - inicioX) * (hacia_este ? 1 : -1);
+      const dy = (e.clientY - inicioY) * (hacia_sur ? 1 : -1);
+
+      // Combina ambos ejes para que la diagonal se sienta natural
+      let nuevoAncho = anchoIni + (dx + dy * proporcion) / 2;
+      nuevoAncho = Math.max(minAncho, Math.min(nuevoAncho, maxAncho));
+      const nuevoAlto = nuevoAncho / proporcion;
+
+      const nuevoIzq = hacia_este ? anclaX : anclaX - nuevoAncho;
+      const nuevoArr = hacia_sur ? anclaY : anclaY - nuevoAlto;
+
+      const ancho = +((nuevoAncho / rect.width) * 100).toFixed(2);
+      const alto = +((nuevoAlto / rect.height) * 100).toFixed(2);
+      const x = +((nuevoIzq / rect.width) * 100).toFixed(2);
+      const y = +((nuevoArr / rect.height) * 100).toFixed(2);
+
+      this.accesoriosColocados.update(lista =>
+        lista.map(i => (i.id === a.id ? { ...i, x, y, ancho, alto } : i))
+      );
+
+      // Mantener sliders sincronizados
+      this.porcentajeAncho.set(+ancho.toFixed(1));
+      this.porcentajeAlto.set(+alto.toFixed(1));
+    };
+
+    const soltar = () => {
+      handle.removeEventListener('pointermove', mover);
+      handle.removeEventListener('pointerup', soltar);
+      handle.removeEventListener('pointercancel', soltar);
+    };
+
+    handle.addEventListener('pointermove', mover);
+    handle.addEventListener('pointerup', soltar);
+    handle.addEventListener('pointercancel', soltar);
+  }
+
+
+
+
 
 
 
