@@ -5,7 +5,6 @@
     <h2 class="fw-bold">Configurar producto</h2>
   </div>
 
-
   <div class="row g-4">
 
     <!-- ================================= -->
@@ -20,11 +19,49 @@
           <h5 class="mb-0">Accesorios</h5>
         </div>
 
-        <div class="card-body" cdkDropList [cdkDropListData]="accesorios()" #listaAccesorios="cdkDropList"
-          [cdkDropListConnectedTo]="[visor]">
+        <!-- Lista desplegable de categorías + accesorios de la categoría con check -->
+        <div class="card-body border-bottom">
 
-          @for(
-          accesorio of accesorios();
+          <label for="categoria" class="form-label fw-semibold">Categoría</label>
+          <select id="categoria" class="form-select" [ngModel]="categoriaActual()"
+            (ngModelChange)="categoriaActual.set($event)">
+            <option value="">Seleccione una categoría</option>
+            @for (categoria of categorias(); track categoria) {
+            <option [value]="categoria">{{ categoria }}</option>
+            }
+          </select>
+
+          @if (categoriaActual()) {
+          <div class="lista-categoria mt-3">
+            @for (item of accesoriosDeCategoria(); track item.id) {
+            <label class="item-categoria d-flex align-items-center gap-2">
+              <input type="checkbox" class="form-check-input mt-0" [ngModel]="estaMarcado(item.id)"
+                (ngModelChange)="alternarMarcado(item, $event)">
+
+              @if (item.tipo === 'texto') {
+              <canvas class="mini-canvas" [appTextoCanvas]="item.texto ?? ''"></canvas>
+              } @else {
+              <img class="mini-imagen" [src]="item.imagen" [alt]="item.nombre">
+              }
+
+              <span>{{ item.nombre }}</span>
+            </label>
+            }
+          </div>
+          }
+
+        </div>
+
+        <!-- Accesorios marcados: se arrastran al visor o se agregan al centro -->
+        <div class="card-body lista-marcados" cdkDropList [cdkDropListData]="accesoriosMarcados()"
+          #listaAccesorios="cdkDropList" [cdkDropListConnectedTo]="[visor]">
+
+          @if (accesoriosMarcados().length === 0) {
+          <small class="text-muted">Marque accesorios en la lista para verlos aquí.</small>
+          }
+
+          @for (
+          accesorio of accesoriosMarcados();
           track accesorio.id
           ){
 

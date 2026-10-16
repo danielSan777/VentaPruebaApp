@@ -75,6 +75,9 @@ export class Cliente implements OnInit {
 
     this.configuracion.set(lista);
     this.agregarPorDefecto(lista);
+
+    // Abrir la primera categoría para que ya se vean los checks
+    this.categoriaActual.set(this.categorias()[0] ?? '');
   }
 
   agregarAccesorio(accesorio: AccesorioColocado): void {
@@ -161,6 +164,10 @@ export class Cliente implements OnInit {
 
     this.colorSeleccionado = color;
 
+    // Si los lentes no están en el visor, solo se recuerda el color:
+    // se aplicará cuando se agreguen (dibujarLentes lo lee)
+    if (!this.canvasLentes) return;
+
     const canvas = this.canvasLentes.nativeElement as HTMLCanvasElement;
     const ctx = canvas.getContext('2d');
 
@@ -185,6 +192,50 @@ export class Cliente implements OnInit {
   );
 
 
+  // ==========================================
+  // CATEGORÍAS Y CHECKS
+  // ==========================================
+
+  // Categoría elegida en la lista desplegable ('' = ninguna)
+  categoriaActual = signal('');
+
+  // Categorías disponibles (sin repetir, en el orden en que aparecen)
+  categorias = computed(() =>
+    [...new Set(this.configuracion().map(a => a.categoria ?? 'Otros'))]
+  );
+
+  // Accesorios de la categoría elegida
+  accesoriosDeCategoria = computed(() =>
+    this.configuracion().filter(a => (a.categoria ?? 'Otros') === this.categoriaActual())
+  );
+
+  // Ids marcados con el check (de todas las categorías), en el orden en que se marcaron
+  idsMarcados = signal<number[]>([]);
+
+  // Accesorios marcados: son las tarjetas que se muestran con Agregar / Quitar
+  accesoriosMarcados = computed(() =>
+    this.idsMarcados()
+      .map(id => this.configuracion().find(a => a.accesorioId === id))
+      .filter((a): a is AccesorioColocado => !!a)
+  );
+
+  estaMarcado(accesorioId: number): boolean {
+    return this.idsMarcados().includes(accesorioId);
+  }
+
+  // Check marcado = aparece la tarjeta; desmarcado = desaparece y se quita del visor
+  alternarMarcado(accesorio: AccesorioColocado, marcado: boolean): void {
+    if (marcado) {
+      this.idsMarcados.update(ids =>
+        ids.includes(accesorio.accesorioId) ? ids : [...ids, accesorio.accesorioId]
+      );
+    } else {
+      this.quitarAccesorio(accesorio.accesorioId);
+      this.idsMarcados.update(ids => ids.filter(i => i !== accesorio.accesorioId));
+    }
+  }
+
+
   // Rotación y modo espejo guardados en el editor (si no tiene, queda normal)
   transformar(a: AccesorioColocado): string {
     const espejo = a.espejo ? ' scaleX(-1)' : '';
@@ -193,19 +244,16 @@ export class Cliente implements OnInit {
 
 
   private agregarPorDefecto(lista: AccesorioColocado[]): void {
-    const obligatorios = [1, 2];
-
-    // Los accesorios con id 1 y 2 (si existen en la configuración)
-    const elegidos = lista.filter(a => obligatorios.includes(a.accesorioId));
-
-    // Más otro cualquiera: el primero que no sea 1 ni 2
-    const otro = lista.find(a => !obligatorios.includes(a.accesorioId));
-    if (otro) elegidos.push(otro);
+    // Accesorios que aparecen marcados desde el inicio (si existen en la configuración)
+    const porDefecto = [1, 2, 3];
+    const elegidos = lista.filter(a => porDefecto.includes(a.accesorioId));
 
     this.accesoriosSeleccionados.set(
       elegidos.map(a => ({ ...a, id: this.siguienteId++ }))
     );
 
+    // Sus checks salen marcados y sus tarjetas visibles desde el inicio
+    this.idsMarcados.set(elegidos.map(a => a.accesorioId));
   }
 
 

@@ -10,7 +10,11 @@ interface Accesorio {
 
   texto?: string;
 
+  categoria?: string;
+
 }
+
+
 
 interface AccesorioColocado {
 
@@ -37,5 +41,7 @@ interface AccesorioColocado {
   rotX?: number; rotY?: number; rotZ?: number; // grados
 
   espejo?: boolean;
+
+  categoria?: string;
 }
 

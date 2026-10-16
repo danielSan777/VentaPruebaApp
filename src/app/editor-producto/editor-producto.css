@@ -263,3 +263,41 @@ button {
   transform-origin: center center;
   pointer-events: none;
 }
+
+/* Lista de accesorios por categoría (con check) */
+.lista-categoria {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.item-categoria {
+  cursor: pointer;
+  padding: 6px 8px;
+  margin-bottom: 0;
+  border-radius: 6px;
+}
+
+.item-categoria:hover {
+  background: rgba(13, 110, 253, 0.08);
+}
+
+.mini-imagen {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.mini-canvas {
+  width: 48px;
+  height: 24px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Lista de accesorios marcados: barra de desplazamiento vertical si hay muchos */
+.lista-marcados {
+  max-height: 60vh;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}

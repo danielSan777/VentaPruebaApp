@@ -5,66 +5,104 @@
         <!-- ACCESORIOS -->
         <div class="col-12 col-md-3 col-lg-3">
 
+            <!-- Lista desplegable de categorías + accesorios con check -->
+            <div class="card p-3 mb-2">
 
-            @for(
-            accesorio of configuracion();
-            track accesorio.accesorioId
-            ){
-
-
-            <div class="card d-flex flex-column align-items-center  mb-2">
-
-                <div class="d-flex align-items-center justify-content-center px-1 p-2" style="width: 100%;">
-
-                    @if (accesorio.tipo === 'texto') {
-                    <canvas [appTextoCanvas]="accesorio.texto ?? ''"
-                        style="width: 100%; height: 50px; display: block;"></canvas>
-                    } @else {
-                    <img [src]="accesorio.imagen" [alt]="accesorio.nombre" style="width: 25%; height: auto;">
+                <label for="categoria" class="form-label fw-semibold">Categoría</label>
+                <select id="categoria" class="form-select" [ngModel]="categoriaActual()"
+                    (ngModelChange)="categoriaActual.set($event)">
+                    <option value="">Seleccione una categoría</option>
+                    @for (categoria of categorias(); track categoria) {
+                    <option [value]="categoria">{{ categoria }}</option>
                     }
+                </select>
 
-                </div>
-                <div>{{ accesorio.nombre }}</div>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-primary" (click)="agregarAccesorio(accesorio)"
-                        [disabled]="estaSeleccionado(accesorio.accesorioId)">
-                        Agregar
-                    </button>
-                    @if(accesorio.accesorioId!=2){
-                    <button type="button" class="btn btn-outline-danger"
-                        (click)="quitarAccesorio(accesorio.accesorioId)"
-                        [disabled]="!estaSeleccionado(accesorio.accesorioId)">
-                        Quitar
-                    </button>
+                @if (categoriaActual()) {
+                <div class="lista-categoria mt-3">
+                    @for (item of accesoriosDeCategoria(); track item.accesorioId) {
+                    <label class="item-categoria d-flex align-items-center gap-2">
+                        <input type="checkbox" class="form-check-input mt-0" [ngModel]="estaMarcado(item.accesorioId)"
+                            [disabled]="item.accesorioId === 2" (ngModelChange)="alternarMarcado(item, $event)">
 
+                        @if (item.tipo === 'texto') {
+                        <canvas class="mini-canvas" [appTextoCanvas]="item.texto ?? ''"></canvas>
+                        } @else {
+                        <img class="mini-imagen" [src]="item.imagen" [alt]="item.nombre">
+                        }
+
+                        <span>{{ item.nombre }}</span>
+
+                        @if (item.accesorioId === 2) {
+                        <small class="text-muted">(obligatorio)</small>
+                        }
+                    </label>
                     }
-
-
-                </div>
-
-                @if (accesorio.accesorioId==1){
-                <div class="mt-3">
-                    <label class="form-label">Color de los lentes</label>
-
-                    <div class="d-flex gap-3">
-                        <label class="d-flex align-items-center gap-1">
-                            <input type="radio" name="colorLentes" value="negro" [(ngModel)]="colorSeleccionado"
-                                (ngModelChange)="cambiarColorLentes($event)">
-                            <span class="color-negro"></span>
-                            Negro
-                        </label>
-
-                        <label class="d-flex align-items-center gap-1">
-                            <input type="radio" name="colorLentes" value="cafe" [(ngModel)]="colorSeleccionado"
-                                (ngModelChange)="cambiarColorLentes($event)">
-                            <span class="color-cafe"></span>
-                            Café
-                        </label>
-                    </div>
                 </div>
                 }
+
             </div>
-            }
+
+            <!-- Accesorios marcados: aquí se agregan y se quitan del visor -->
+            <div class="lista-marcados">
+
+                @if (accesoriosMarcados().length === 0) {
+                <small class="text-muted">Marque accesorios en la lista para verlos aquí.</small>
+                }
+
+                @for (accesorio of accesoriosMarcados(); track accesorio.accesorioId) {
+
+                <div class="card d-flex flex-column align-items-center mb-2">
+
+                    <div class="d-flex align-items-center justify-content-center px-1 p-2" style="width: 100%;">
+
+                        @if (accesorio.tipo === 'texto') {
+                        <canvas [appTextoCanvas]="accesorio.texto ?? ''"
+                            style="width: 100%; height: 50px; display: block;"></canvas>
+                        } @else {
+                        <img [src]="accesorio.imagen" [alt]="accesorio.nombre" style="width: 25%; height: auto;">
+                        }
+
+                    </div>
+                    <div>{{ accesorio.nombre }}</div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-primary" (click)="agregarAccesorio(accesorio)"
+                            [disabled]="estaSeleccionado(accesorio.accesorioId)">
+                            Agregar
+                        </button>
+                        @if (accesorio.accesorioId != 2) {
+                        <button type="button" class="btn btn-outline-danger"
+                            (click)="quitarAccesorio(accesorio.accesorioId)"
+                            [disabled]="!estaSeleccionado(accesorio.accesorioId)">
+                            Quitar
+                        </button>
+                        }
+                    </div>
+
+                    @if (accesorio.accesorioId == 1) {
+                    <div class="mt-3">
+                        <label class="form-label">Color de los lentes</label>
+
+                        <div class="d-flex gap-3">
+                            <label class="d-flex align-items-center gap-1">
+                                <input type="radio" name="colorLentes" value="negro" [(ngModel)]="colorSeleccionado"
+                                    (ngModelChange)="cambiarColorLentes($event)">
+                                <span class="color-negro"></span>
+                                Negro
+                            </label>
+
+                            <label class="d-flex align-items-center gap-1">
+                                <input type="radio" name="colorLentes" value="cafe" [(ngModel)]="colorSeleccionado"
+                                    (ngModelChange)="cambiarColorLentes($event)">
+                                <span class="color-cafe"></span>
+                                Café
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+
+            </div>
 
         </div>
 

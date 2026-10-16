@@ -3,6 +3,7 @@ import {
   ElementRef,
   AfterViewInit,
   signal,
+  computed,
   NgZone,
   inject,
   ChangeDetectorRef,
@@ -82,29 +83,34 @@ export class EditorProducto {
     {
       id: 1,
       nombre: 'Lentes',
-      imagen: 'accesorios/lentes.png'
+      imagen: 'accesorios/lentes.png',
+      categoria: 'Moda'
     },
     {
       id: 2,
       nombre: 'Nombre',
       imagen: '',
       tipo: 'texto',
-      texto: 'Ingrese su nombre.'
+      texto: 'Ingrese su nombre.',
+      categoria: 'Personalización'
     },
     {
       id: 3,
       nombre: 'caja-herramienta',
-      imagen: 'accesorios/caja_herramientas.png'
+      imagen: 'accesorios/caja_herramientas.png',
+      categoria: 'Objetos'
     },
     {
       id: 4,
       nombre: 'regalo',
-      imagen: 'accesorios/regalo.png'
+      imagen: 'accesorios/regalo.png',
+      categoria: 'Objetos'
     },
     {
       id: 5,
       nombre: 'vaso de café',
-      imagen: 'accesorios/vaso_cafe.png'
+      imagen: 'accesorios/vaso_cafe.png',
+      categoria: 'Objetos'
     }
 
 
@@ -116,6 +122,49 @@ export class EditorProducto {
 
   accesoriosColocados =
     signal<AccesorioColocado[]>([]);
+
+  // ==========================================
+  // CATEGORÍAS Y SELECCIÓN DE ACCESORIOS
+  // ==========================================
+
+  // Categoría elegida en la lista desplegable ('' = ninguna)
+  categoriaActual = signal('');
+
+  // Categorías disponibles (sin repetir, en el orden en que aparecen)
+  categorias = computed(() =>
+    [...new Set(this.accesorios().map(a => a.categoria ?? 'Otros'))]
+  );
+
+  // Accesorios de la categoría elegida
+  accesoriosDeCategoria = computed(() =>
+    this.accesorios().filter(a => (a.categoria ?? 'Otros') === this.categoriaActual())
+  );
+
+  // Ids marcados con el check (de todas las categorías), en el orden en que se marcaron
+  idsMarcados = signal<number[]>([]);
+
+  // Accesorios marcados: son las tarjetas que se muestran en el panel
+  accesoriosMarcados = computed(() =>
+    this.idsMarcados()
+      .map(id => this.accesorios().find(a => a.id === id))
+      .filter((a): a is Accesorio => !!a)
+  );
+
+  estaMarcado(id: number): boolean {
+    return this.idsMarcados().includes(id);
+  }
+
+  alternarMarcado(accesorio: Accesorio, marcado: boolean): void {
+    if (marcado) {
+      this.idsMarcados.update(ids =>
+        ids.includes(accesorio.id) ? ids : [...ids, accesorio.id]
+      );
+    } else {
+      // Al desmarcar también sale del visor (si estaba colocado)
+      this.eliminarPorTipo(accesorio.id);
+      this.idsMarcados.update(ids => ids.filter(i => i !== accesorio.id));
+    }
+  }
 
 
   // ==========================================
@@ -214,6 +263,7 @@ export class EditorProducto {
           alto: altoPct,
           tipo: accesorio.tipo ?? 'imagen',
           texto: accesorio.texto,
+          categoria: accesorio.categoria,
         }
       ];
     });
@@ -559,6 +609,7 @@ export class EditorProducto {
           alto: altoPct,
           tipo: accesorio.tipo ?? 'imagen',
           texto: accesorio.texto,
+          categoria: accesorio.categoria,
         }
       ];
     });
