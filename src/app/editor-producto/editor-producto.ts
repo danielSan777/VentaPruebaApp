@@ -23,6 +23,9 @@ import { TextoCanvas } from '../directivas/texto-canvas';
 import Swal from 'sweetalert2'
 import { Router } from '@angular/router';
 
+// Valores que se pueden escribir a mano en el panel de ajustes
+type CampoEditable = 'ancho' | 'alto' | 'rotX' | 'rotY' | 'rotZ';
+
 
 @Component({
   standalone: true,
@@ -463,6 +466,68 @@ export class EditorProducto {
     );
   }
 
+
+
+  // ==========================================
+  // EDICIÓN MANUAL (escribir el valor en el campo)
+  // ==========================================
+
+  // Mismos límites que los sliders
+  private readonly limitesEditables = {
+    ancho: { min: 5, max: 80 },
+    alto: { min: 5, max: 80 },
+    rotX: { min: -90, max: 90 },
+    rotY: { min: -180, max: 180 },
+    rotZ: { min: -180, max: 180 },
+  } as const;
+
+  // Mientras se escribe: aplica el valor solo si ya es un número dentro del rango
+  editarValor(event: Event, campo: CampoEditable): void {
+    const entrada = event.target as HTMLInputElement;
+    const valor = parseFloat(entrada.value);
+    const { min, max } = this.limitesEditables[campo];
+
+    if (Number.isNaN(valor) || valor < min || valor > max) return;
+
+    this.aplicarValor(campo, valor);
+  }
+
+  // Al terminar (Enter, salir del campo o usar las flechas): corrige y deja el valor final
+  confirmarValor(event: Event, campo: CampoEditable): void {
+    const entrada = event.target as HTMLInputElement;
+    const { min, max } = this.limitesEditables[campo];
+
+    let valor = parseFloat(entrada.value);
+
+    // Campo vacío o inválido: vuelve al valor actual
+    if (Number.isNaN(valor)) {
+      valor = this.valorActual(campo);
+    }
+
+    // Dentro del rango y con máximo 2 decimales
+    valor = +Math.min(Math.max(valor, min), max).toFixed(2);
+
+    entrada.value = String(valor);
+    this.aplicarValor(campo, valor);
+  }
+
+  private valorActual(campo: CampoEditable): number {
+    switch (campo) {
+      case 'ancho': return this.porcentajeAncho();
+      case 'alto': return this.porcentajeAlto();
+      default: return this.rotacion()[campo];
+    }
+  }
+
+  private aplicarValor(campo: CampoEditable, valor: number): void {
+    if (campo === 'ancho') {
+      this.cambiarAncho(valor);
+    } else if (campo === 'alto') {
+      this.cambiarAlto(valor);
+    } else {
+      this.cambiarRotacion(campo, valor);
+    }
+  }
 
 
   async eliminarConfiguracion(): Promise<void> {

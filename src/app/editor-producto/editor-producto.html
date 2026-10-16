@@ -215,7 +215,12 @@
           <input type="range" class="form-range rango-vertical" min="5" max="80" step="0.5"
             [ngModel]="porcentajeAncho()" (ngModelChange)="cambiarAncho($event)">
 
-          <div>{{ porcentajeAncho() }}%</div>
+          <div class="input-group input-group-sm campo-numero">
+            <input type="number" class="form-control text-center" min="5" max="80" step="0.5"
+              [value]="porcentajeAncho()" (input)="editarValor($event, 'ancho')"
+              (change)="confirmarValor($event, 'ancho')">
+            <span class="input-group-text">%</span>
+          </div>
         </div>
 
         <!-- Rango de alto -->
@@ -225,7 +230,12 @@
           <input type="range" class="form-range rango-vertical" min="5" max="80" step="0.5" [ngModel]="porcentajeAlto()"
             (ngModelChange)="cambiarAlto($event)">
 
-          <div>{{ porcentajeAlto() }}%</div>
+          <div class="input-group input-group-sm campo-numero">
+            <input type="number" class="form-control text-center" min="5" max="80" step="0.5"
+              [value]="porcentajeAlto()" (input)="editarValor($event, 'alto')"
+              (change)="confirmarValor($event, 'alto')">
+            <span class="input-group-text">%</span>
+          </div>
         </div>
 
         <!-- Giro izquierda / derecha -->
@@ -233,7 +243,12 @@
           <label class="form-label">Giro izq/der</label>
           <input type="range" class="form-range" min="-180" max="180" step="1" [ngModel]="rotacion().rotY"
             (ngModelChange)="cambiarRotacion('rotY', $event)">
-          <div>{{ rotacion().rotY }}°</div>
+          <div class="input-group input-group-sm campo-numero">
+            <input type="number" class="form-control text-center" min="-180" max="180" step="1"
+              [value]="rotacion().rotY" (input)="editarValor($event, 'rotY')"
+              (change)="confirmarValor($event, 'rotY')">
+            <span class="input-group-text">°</span>
+          </div>
         </div>
 
         <!-- Inclinar atrás / adelante -->
@@ -241,7 +256,12 @@
           <label class="form-label">Inclinar atrás/adelante</label>
           <input type="range" class="form-range" min="-90" max="90" step="1" [ngModel]="rotacion().rotX"
             (ngModelChange)="cambiarRotacion('rotX', $event)">
-          <div>{{ rotacion().rotX }}°</div>
+          <div class="input-group input-group-sm campo-numero">
+            <input type="number" class="form-control text-center" min="-90" max="90" step="1"
+              [value]="rotacion().rotX" (input)="editarValor($event, 'rotX')"
+              (change)="confirmarValor($event, 'rotX')">
+            <span class="input-group-text">°</span>
+          </div>
         </div>
 
         <!-- Giro plano -->
@@ -249,7 +269,12 @@
           <label class="form-label">Giro plano</label>
           <input type="range" class="form-range" min="-180" max="180" step="1" [ngModel]="rotacion().rotZ"
             (ngModelChange)="cambiarRotacion('rotZ', $event)">
-          <div>{{ rotacion().rotZ }}°</div>
+          <div class="input-group input-group-sm campo-numero">
+            <input type="number" class="form-control text-center" min="-180" max="180" step="1"
+              [value]="rotacion().rotZ" (input)="editarValor($event, 'rotZ')"
+              (change)="confirmarValor($event, 'rotZ')">
+            <span class="input-group-text">°</span>
+          </div>
         </div>
 
         <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reiniciarRotacion()">
@@ -270,7 +295,7 @@
     <!-- ================================= -->
     <!-- GUARDAR -->
     <!-- ================================= -->
-
+    
     <div class="mt-4 d-flex gap-2">
 
       <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">

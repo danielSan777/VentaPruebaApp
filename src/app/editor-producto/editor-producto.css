@@ -301,3 +301,9 @@ button {
   overflow-y: auto;
   scrollbar-gutter: stable;
 }
+
+/* Campos numéricos para escribir el valor a mano (ancho, alto y giros) */
+.campo-numero {
+  max-width: 130px;
+  margin: 0 auto;
+}
