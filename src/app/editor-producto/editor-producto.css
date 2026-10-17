@@ -307,3 +307,9 @@ button {
   max-width: 130px;
   margin: 0 auto;
 }
+
+/* Botón "Reiniciar" debajo de Ancho y Alto */
+.btn-reset {
+  margin-top: 6px;
+  padding: 2px 12px;
+}

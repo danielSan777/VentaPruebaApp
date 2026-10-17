@@ -221,6 +221,11 @@
               (change)="confirmarValor($event, 'ancho')">
             <span class="input-group-text">%</span>
           </div>
+
+          <button type="button" class="btn btn-outline-secondary btn-sm btn-reset"
+            [disabled]="accesorioSeleccionadoId() === null" (click)="reiniciarAncho()">
+            Reiniciar
+          </button>
         </div>
 
         <!-- Rango de alto -->
@@ -231,11 +236,15 @@
             (ngModelChange)="cambiarAlto($event)">
 
           <div class="input-group input-group-sm campo-numero">
-            <input type="number" class="form-control text-center" min="5" max="80" step="0.5"
-              [value]="porcentajeAlto()" (input)="editarValor($event, 'alto')"
-              (change)="confirmarValor($event, 'alto')">
+            <input type="number" class="form-control text-center" min="5" max="80" step="0.5" [value]="porcentajeAlto()"
+              (input)="editarValor($event, 'alto')" (change)="confirmarValor($event, 'alto')">
             <span class="input-group-text">%</span>
           </div>
+
+          <button type="button" class="btn btn-outline-secondary btn-sm btn-reset"
+            [disabled]="accesorioSeleccionadoId() === null" (click)="reiniciarAlto()">
+            Reiniciar
+          </button>
         </div>
 
         <!-- Giro izquierda / derecha -->
@@ -245,10 +254,13 @@
             (ngModelChange)="cambiarRotacion('rotY', $event)">
           <div class="input-group input-group-sm campo-numero">
             <input type="number" class="form-control text-center" min="-180" max="180" step="1"
-              [value]="rotacion().rotY" (input)="editarValor($event, 'rotY')"
-              (change)="confirmarValor($event, 'rotY')">
+              [value]="rotacion().rotY" (input)="editarValor($event, 'rotY')" (change)="confirmarValor($event, 'rotY')">
             <span class="input-group-text">°</span>
           </div>
+          <button type="button" class="btn btn-outline-secondary btn-sm btn-reset"
+            [disabled]="accesorioSeleccionadoId() === null" (click)="cambiarRotacion('rotY', 0)">
+            Reiniciar
+          </button>
         </div>
 
         <!-- Inclinar atrás / adelante -->
@@ -257,11 +269,14 @@
           <input type="range" class="form-range" min="-90" max="90" step="1" [ngModel]="rotacion().rotX"
             (ngModelChange)="cambiarRotacion('rotX', $event)">
           <div class="input-group input-group-sm campo-numero">
-            <input type="number" class="form-control text-center" min="-90" max="90" step="1"
-              [value]="rotacion().rotX" (input)="editarValor($event, 'rotX')"
-              (change)="confirmarValor($event, 'rotX')">
+            <input type="number" class="form-control text-center" min="-90" max="90" step="1" [value]="rotacion().rotX"
+              (input)="editarValor($event, 'rotX')" (change)="confirmarValor($event, 'rotX')">
             <span class="input-group-text">°</span>
           </div>
+          <button type="button" class="btn btn-outline-secondary btn-sm btn-reset"
+            [disabled]="accesorioSeleccionadoId() === null" (click)="cambiarRotacion('rotX', 0)">
+            Reiniciar
+          </button>
         </div>
 
         <!-- Giro plano -->
@@ -271,10 +286,13 @@
             (ngModelChange)="cambiarRotacion('rotZ', $event)">
           <div class="input-group input-group-sm campo-numero">
             <input type="number" class="form-control text-center" min="-180" max="180" step="1"
-              [value]="rotacion().rotZ" (input)="editarValor($event, 'rotZ')"
-              (change)="confirmarValor($event, 'rotZ')">
+              [value]="rotacion().rotZ" (input)="editarValor($event, 'rotZ')" (change)="confirmarValor($event, 'rotZ')">
             <span class="input-group-text">°</span>
           </div>
+          <button type="button" class="btn btn-outline-secondary btn-sm btn-reset"
+            [disabled]="accesorioSeleccionadoId() === null" (click)="cambiarRotacion('rotZ', 0)">
+            Reiniciar
+          </button>
         </div>
 
         <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reiniciarRotacion()">
@@ -295,7 +313,7 @@
     <!-- ================================= -->
     <!-- GUARDAR -->
     <!-- ================================= -->
-    
+
     <div class="mt-4 d-flex gap-2">
 
       <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">

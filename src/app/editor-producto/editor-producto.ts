@@ -176,6 +176,16 @@ export class EditorProducto {
 
   private siguienteId = 1;
 
+  // Tamaño con el que se colocó cada accesorio (para el botón "Reiniciar")
+  private tamanosIniciales = new Map<number, { ancho: number; alto: number }>();
+
+  // Crea un id nuevo y recuerda el tamaño inicial del accesorio
+  private nuevoId(ancho: number, alto: number): number {
+    const id = this.siguienteId++;
+    this.tamanosIniciales.set(id, { ancho, alto });
+    return id;
+  }
+
 
 
 
@@ -256,7 +266,7 @@ export class EditorProducto {
       return [
         ...lista,
         {
-          id: this.siguienteId++,
+          id: this.nuevoId(anchoPct, altoPct),
           accesorioId: accesorio.id,
           nombre: accesorio.nombre,
           imagen: accesorio.imagen,
@@ -421,6 +431,24 @@ export class EditorProducto {
     this.accesoriosColocados.update(lista =>
       lista.map(a => (a.id === id ? { ...a, [eje]: valor } : a))
     );
+  }
+
+  // ==========================================
+  // REINICIAR ANCHO / ALTO (vuelve al tamaño con el que se colocó)
+  // ==========================================
+
+  reiniciarAncho(): void {
+    const id = this.accesorioSeleccionadoId();
+    const inicial = id === null ? undefined : this.tamanosIniciales.get(id);
+
+    if (inicial) this.cambiarAncho(inicial.ancho);
+  }
+
+  reiniciarAlto(): void {
+    const id = this.accesorioSeleccionadoId();
+    const inicial = id === null ? undefined : this.tamanosIniciales.get(id);
+
+    if (inicial) this.cambiarAlto(inicial.alto);
   }
 
   reiniciarRotacion(): void {
@@ -664,7 +692,7 @@ export class EditorProducto {
       return [
         ...lista,
         {
-          id: this.siguienteId++,
+          id: this.nuevoId(anchoPct, altoPct),
           accesorioId: accesorio.id,
           nombre: accesorio.nombre,
           imagen: accesorio.imagen,
